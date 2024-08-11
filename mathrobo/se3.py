@@ -45,7 +45,7 @@ class SE3(LieAbstract):
   
   def set_adj_mat(self, mat = identity(6)):
     self._rot = (mat[0:3,0:3] + mat[3:6,3:6]) * 0.5
-    self._pos = SO3.hat(self._pos, self.lib)@self._rot.transpose()
+    self._pos = SO3.vee(mat[3:6,0:3]@self._rot.transpose(), self.lib)
 
   def adj_inv(self):
     mat = zeros((6,6), self.lib)
@@ -55,7 +55,6 @@ class SE3(LieAbstract):
     mat[3:6,3:6] = self._rot.transpose()
     
     return mat
-
 
   @staticmethod
   def hat(vec, LIB = 'numpy'):

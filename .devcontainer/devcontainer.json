@@ -1,7 +1,0 @@
-{
-    "name": "rattle",
-    "dockerComposeFile": ["./docker-compose.yml"],
-    "service": "rattle",
-    "shutdownAction": "none",
-    "workspaceFolder": "/workspace/rattle"
-  }

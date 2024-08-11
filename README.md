@@ -9,6 +9,6 @@ pip install .
 
 ## Test
 ```
-cd test
+cd tests
 pytest
 ```
