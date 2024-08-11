@@ -34,11 +34,20 @@ def test_se3_adj():
   m[0:3, 0:3] = r 
   m[3:6,0:3] = SO3.hat(v[3:6])@r
   m[3:6, 3:6] = r 
-  print(m)
   
   np.testing.assert_allclose(res.adjoint(), m)
   
-def test_se3_inv():
+def test_se3_set_adj():
+  v = np.random.rand(6)
+  r = SO3.mat(v[0:3]) 
+  mat = SE3(r, v[3:6])
+  
+  res = SE3()
+  res.set_adj_mat(mat.adjoint())
+  
+  np.testing.assert_allclose(res.matrix(), mat.matrix())
+  
+def test_se3_adj_inv():
   v = np.random.rand(6)
   v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
   r = SO3.mat(v[0:3]) 
