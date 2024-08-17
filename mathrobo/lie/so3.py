@@ -1,5 +1,6 @@
-from mathrobo.lie_abst import *
-from mathrobo.basic import *
+from ..basic import *
+from .lie_abst import *
+
 
 class SO3(LieAbstract):
   def __init__(self, r = identity(3), LIB = 'numpy'):

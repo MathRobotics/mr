@@ -1,6 +1,6 @@
-from mathrobo.basic import *
-from mathrobo.lie_abst import *
-from mathrobo.so3 import *
+from ..basic import *
+from .lie_abst import *
+from .so3 import *
 
 class SE3(LieAbstract):
 
