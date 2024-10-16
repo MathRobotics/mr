@@ -131,15 +131,15 @@ class SO3(LieAbstract):
     u = a_-sa
     v = (1-ca)
 
-    mat[0,0] = k*sa + k*u*x*x
-    mat[0,1] = k*u*x*y - k*v*z
-    mat[0,2] = k*u*z*x + k*v*y
-    mat[1,0] = k*u*x*y + k*v*z
-    mat[1,1] = k*sa + k*u*y*y
-    mat[1,2] = k*u*y*z - k*v*x
-    mat[2,0] = k*u*z*x - k*v*y
-    mat[2,1] = k*u*y*z + k*v*x
-    mat[2,2] = k*sa + k*u*z*z
+    mat[0,0] = k*(sa + u*x*x)
+    mat[0,1] = k*(u*x*y - v*z)
+    mat[0,2] = k*(u*z*x + v*y)
+    mat[1,0] = k*(u*x*y + v*z)
+    mat[1,1] = k*(sa + u*y*y)
+    mat[1,2] = k*(u*y*z - v*x)
+    mat[2,0] = k*(u*z*x - v*y)
+    mat[2,1] = k*(u*y*z + v*x)
+    mat[2,2] = k*(sa + u*z*z)
 
     return mat
   
@@ -178,15 +178,15 @@ class SO3(LieAbstract):
     v = a_-sa
     w = 0.5*a_**2-1+ca
 
-    mat[0,0] = k*u  + k*w*x*x
-    mat[0,1] = k*w*x*y - k*v*z
-    mat[0,2] = k*w*z*x + k*v*y
-    mat[1,0] = k*w*x*y + k*v*z
-    mat[1,1] = k*u  + k*w*y*y
-    mat[1,2] = k*w*y*z - k*v*x
-    mat[2,0] = k*w*z*x - k*v*y
-    mat[2,1] = k*w*y*z + k*v*x
-    mat[2,2] = k*u  + k*w*z*z
+    mat[0,0] = k*(u  + w*x*x)
+    mat[0,1] = k*(w*x*y - v*z)
+    mat[0,2] = k*(w*z*x + v*y)
+    mat[1,0] = k*(w*x*y + v*z)
+    mat[1,1] = k*(u  + w*y*y)
+    mat[1,2] = k*(w*y*z - v*x)
+    mat[2,0] = k*(w*z*x - v*y)
+    mat[2,1] = k*(w*y*z + v*x)
+    mat[2,2] = k*(u  + w*z*z)
     
     return mat
   
