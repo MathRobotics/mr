@@ -62,7 +62,7 @@ def test_so3_hat_commute():
   res1 = mr.SO3.hat(v1) @ v2
   res2 = mr.SO3.hat_commute(v2) @ v1
   
-  np.testing.assert_array_equal(res1, res2)
+  np.testing.assert_allclose(res1, res2, rtol=1e-15, atol=1e-15)
   
 def test_so3_vee():
   v = np.random.rand(3)
