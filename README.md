@@ -1,4 +1,4 @@
-# MathRobotics
+# mathrobo
 ```
 pip install -r requirements.txt
 ```
