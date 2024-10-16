@@ -1,24 +1,28 @@
-from mathrobo.basic import *
-from mathrobo.lie_abst import *
-from mathrobo.so3 import *
+from ..basic import *
+from .lie_abst import *
+from .so3 import *
 
 class SE3(LieAbstract):
 
-  def __init__(self, vec = zeros(6), LIB = 'numpy'): 
+  def __init__(self, rot = identity(3), pos = zeros(3), LIB = 'numpy'): 
     '''
     Constructor
     '''
-    self._rot = SO3.mat(vec[0:3])
-    self._pos = SO3.integ_mat(vec[0:3])@vec[3:6]
-
+    self._rot = rot
+    self._pos = pos
     self.lib = LIB
-    
+  
   def matrix(self):
     mat = identity(4)
     mat[0:3,0:3] = self._rot
     mat[0:3,3] = self._pos
     return mat
   
+  def set_matrix(self, mat = identity(4)):
+    self._rot = mat[0:3,0:3]
+    self._pos = mat[0:3,3]
+    return mat
+
   def pos(self):
     return self._pos
   
@@ -36,6 +40,19 @@ class SE3(LieAbstract):
     mat[0:3,0:3] = self._rot
     mat[3:6,0:3] = SO3.hat(self._pos, self.lib)@self._rot
     mat[3:6,3:6] = self._rot
+    
+    return mat
+  
+  def set_adj_mat(self, mat = identity(6)):
+    self._rot = (mat[0:3,0:3] + mat[3:6,3:6]) * 0.5
+    self._pos = SO3.vee(mat[3:6,0:3]@self._rot.transpose(), self.lib)
+
+  def adj_inv(self):
+    mat = zeros((6,6), self.lib)
+    
+    mat[0:3,0:3] = self._rot.transpose()
+    mat[3:6,0:3] = -self._rot.transpose() @ SO3.hat(self._pos, self.lib)
+    mat[3:6,3:6] = self._rot.transpose()
     
     return mat
 
@@ -69,8 +86,13 @@ class SE3(LieAbstract):
     a = vee(hat(a))
     '''
     vec = zeros(6, LIB)
-    vec[0:3] = SO3.vee(vec_hat[0:3,0:3], LIB)
-    vec[3:6] = vec_hat[0:3,3]
+    
+    if(LIB == 'sympy'):
+      vec[0:3,0] = SO3.vee(vec_hat[0:3,0:3], LIB)
+      vec[3:6,0] = vec_hat[0:3,3]
+    else:
+      vec[0:3] = SO3.vee(vec_hat[0:3,0:3], LIB)
+      vec[3:6] = vec_hat[0:3,3]
 
     return vec
   
@@ -248,7 +270,7 @@ class SE3(LieAbstract):
 
   @staticmethod
   def adj_vee(vec_hat, LIB = 'numpy'):
-    vec = zeros((6,1), LIB)
+    vec = zeros(6, LIB)
     
     vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3], LIB)+SO3.vee(vec_hat[3:6,3:6]), LIB)
     vec[3,6] = SO3.vee(vec_hat[3:6,0:3], LIB)
@@ -264,7 +286,7 @@ class SE3(LieAbstract):
 
     h = SE3.mat(vec, a, LIB = 'numpy')
 
-    mat = zeros((6,6))
+    mat = zeros((6,6), LIB)
     mat[0:3,0:3] = h[0:3,0:3]
     mat[3:6,0:3] = SO3.hat(h[0:3,3], LIB)@h[0:3,0:3]
     mat[3:6,3:6] = h[0:3,0:3]
@@ -285,16 +307,24 @@ class SE3(LieAbstract):
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
     
     r = SO3.integ_mat(rot, a, LIB)
-  
-    mat = zeros((6,6))
+
+    mat = zeros((6,6), LIB)
     mat[0:3,0:3] = r
     mat[3:6,0:3] = SE3.__integ_p_cross_r(vec, a, LIB)
     mat[3:6,3:6] = r
 
     return mat
   
-class SE3wrench(SE3):
-  
+class SE3wre(SE3):
+  def matrix(self):
+    mat = zeros((6,6), self.lib)
+    
+    mat[0:3,0:3] = self._rot
+    mat[0:3,3:6] = SO3.hat(self._pos, self.lib)@self._rot
+    mat[3:6,3:6] = self._rot
+    
+    return mat
+
   @staticmethod
   def hat(vec, LIB = 'numpy'):
     mat = zeros((6,6), LIB)
@@ -315,16 +345,40 @@ class SE3wrench(SE3):
   
   @staticmethod
   def mat(vec, a, LIB = 'numpy'):
-    return SE3.mat(vec, -a, LIB).Transpose()
+    return SE3.adj_mat(vec, a, LIB).transpose()
   
   @staticmethod
   def integ_mat(vec, a, LIB = 'numpy'):
-    return SE3.integ_mat(vec, -a, LIB).Transpose()
+    return SE3.adj_integ_mat(vec, a, LIB).transpose()
+
+'''
+  Khalil, et al. 1995
+'''
+class SE3ine(SE3):
+  @staticmethod
+  def hat(vec, LIB = 'numpy'):
+    mat = np.zeros((6,6),LIB)
+
+    mpg = vec[1:4]
+
+    mat[0:3,0:3] = SO3ine.hat(vec[4:10])
+    mat[0:3,3:6] = SO3wre.hat(mpg)
+    mat[3:6,0:3] = SO3.hat(mpg)
+    mat[3:6,3:6] = vec[0]*identity(3,LIB)
+
+    return mat
+
   
   @staticmethod
-  def adj_mat(vec, a, LIB = 'numpy'):
-    return SE3.adj_mat(vec, -a, LIB).Transpose()
-  
-  @staticmethod
-  def adj_integ_mat(vec, a, LIB = 'numpy'):
-    return SE3.integ_mat(vec, -a, LIB).Transpose()
+  def hat_commute(vec, LIB = 'numpy'):
+    mat = zeros((6,10), LIB)
+
+    v = vec[3:6]
+    w = vec[0:3]
+
+    mat[3:6,0] = v
+    mat[0:3,1:4] = SO3wre.hat_commute(v)
+    mat[3:6,1:4] = SO3.hat_commute(w)
+    mat[0:3,4:10] = SO3ine.hat_commute(w)
+
+    return mat

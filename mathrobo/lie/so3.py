@@ -1,22 +1,32 @@
-from mathrobo.lie_abst import *
-from mathrobo.basic import *
+from ..basic import *
+from .lie_abst import *
+
 
 class SO3(LieAbstract):
-  def __init__(self, vec = zeros(3), LIB = 'numpy'):
+  def __init__(self, r = identity(3), LIB = 'numpy'):
     '''
     Constructor
     '''
-    self._matrix = SO3.mat(vec)
+    self._rot = r
     self._lib = LIB
     
   def matrix(self):
-    return self._matrix
+    return self._rot
+  
+  def set_matrix(self, mat = identity(4)):
+    self._rot = mat
     
   def inverse(self):
-    return self._matrix.transpose()
+    return self._rot.transpose()
 
   def adjoint(self):
-    return self._matrix
+    return self._rot
+  
+  def set_adj_mat(self, mat = identity(3)):
+    self._rot = mat
+
+  def adj_inv(self):
+    return self._rot.transpose()
 
   @staticmethod
   def hat(vec, LIB = 'numpy'):
@@ -121,15 +131,15 @@ class SO3(LieAbstract):
     u = a_-sa
     v = (1-ca)
 
-    mat[0,0] = k*sa + k*u*x*x
-    mat[0,1] = k*u*x*y - k*v*z
-    mat[0,2] = k*u*z*x + k*v*y
-    mat[1,0] = k*u*x*y + k*v*z
-    mat[1,1] = k*sa + k*u*y*y
-    mat[1,2] = k*u*y*z - k*v*x
-    mat[2,0] = k*u*z*x - k*v*y
-    mat[2,1] = k*u*y*z + k*v*x
-    mat[2,2] = k*sa + k*u*z*z
+    mat[0,0] = k*(sa + u*x*x)
+    mat[0,1] = k*(u*x*y - v*z)
+    mat[0,2] = k*(u*z*x + v*y)
+    mat[1,0] = k*(u*x*y + v*z)
+    mat[1,1] = k*(sa + u*y*y)
+    mat[1,2] = k*(u*y*z - v*x)
+    mat[2,0] = k*(u*z*x - v*y)
+    mat[2,1] = k*(u*y*z + v*x)
+    mat[2,2] = k*(sa + u*z*z)
 
     return mat
   
@@ -168,15 +178,15 @@ class SO3(LieAbstract):
     v = a_-sa
     w = 0.5*a_**2-1+ca
 
-    mat[0,0] = k*u  + k*w*x*x
-    mat[0,1] = k*w*x*y - k*v*z
-    mat[0,2] = k*w*z*x + k*v*y
-    mat[1,0] = k*w*x*y + k*v*z
-    mat[1,1] = k*u  + k*w*y*y
-    mat[1,2] = k*w*y*z - k*v*x
-    mat[2,0] = k*w*z*x - k*v*y
-    mat[2,1] = k*w*y*z + k*v*x
-    mat[2,2] = k*u  + k*w*z*z
+    mat[0,0] = k*(u  + w*x*x)
+    mat[0,1] = k*(w*x*y - v*z)
+    mat[0,2] = k*(w*z*x + v*y)
+    mat[1,0] = k*(w*x*y + v*z)
+    mat[1,1] = k*(u  + w*y*y)
+    mat[1,2] = k*(w*y*z - v*x)
+    mat[2,0] = k*(w*z*x - v*y)
+    mat[2,1] = k*(w*y*z + v*x)
+    mat[2,2] = k*(u  + w*z*z)
     
     return mat
   
@@ -195,3 +205,62 @@ class SO3(LieAbstract):
   @staticmethod
   def adj_integ_mat(vec, a, LIB = 'numpy'):
     return SO3.integ_mat(vec, a, LIB)
+  
+class SO3wre(SO3):
+  @staticmethod
+  def hat(vec, LIB = 'numpy'):
+    return -SO3.hat(vec, LIB)
+  
+  @staticmethod
+  def hat_commute(vec, LIB = 'numpy'):
+    return SO3.hat(vec, LIB)
+  
+  @staticmethod
+  def mat(vec, a, LIB = 'numpy'):
+    return SO3.mat(vec, a, LIB).transpose()
+  
+  @staticmethod
+  def integ_mat(vec, a, LIB = 'numpy'):
+    return SO3.integ_mat(vec, a, LIB).transpose()
+  
+class SO3ine(SO3):
+  @staticmethod
+  def hat(vec, LIB = 'numpy'):
+    mat = zeros((3,3), LIB)
+
+    mat[0,0] = vec[0]
+    mat[0,1] = vec[5]
+    mat[0,2] = vec[4]
+    mat[1,0] = vec[5]
+    mat[1,1] = vec[1]
+    mat[1,2] = vec[3]
+    mat[2,0] = vec[4]
+    mat[2,1] = vec[3]
+    mat[2,2] = vec[2]
+
+    return mat
+  
+  @staticmethod
+  def hat_commute(vec, LIB = 'numpy'):
+    mat = zeros((3, 6), LIB)
+
+    mat[0,0] = vec[0]
+    mat[1,1] = vec[1]
+    mat[2,2] = vec[2]
+
+    mat[1,5] = vec[0]
+    mat[2,4] = vec[0]
+    mat[2,3] = vec[1]
+    mat[0,5] = vec[1]
+    mat[0,4] = vec[2]
+    mat[1,3] = vec[2]
+
+    return mat
+  
+  @staticmethod
+  def mat(vec, a, LIB = 'numpy'):
+    return SO3.mat(vec, a, LIB).transpose()
+  
+  @staticmethod
+  def integ_mat(vec, a, LIB = 'numpy'):
+    return SO3.integ_mat(vec, a, LIB).transpose()

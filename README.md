@@ -1,4 +1,4 @@
-# sui
+# mathrobo
 ```
 pip install -r requirements.txt
 ```
@@ -7,8 +7,8 @@ install package
 pip install .
 ```
 
-## test
+## Test
 ```
-cd test
+cd tests
 pytest
 ```
