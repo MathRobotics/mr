@@ -10,13 +10,14 @@ def test_se3_hat():
   v = sp.Matrix(x)
   
   m = sp.Matrix([ \
-    [0., -v[2], v[1], v[3]], \
-    [v[2], 0., -v[0], v[4]], \
-    [-v[1], v[0], 0., v[5]],
-    [0.,     0.,      0.,     0.]])
+    [0, -v[2], v[1], v[3]], \
+    [v[2], 0, -v[0], v[4]], \
+    [-v[1], v[0], 0, v[5]],
+    [0,     0,    0,    0]])
   
   res = mr.SE3.hat(v, 'sympy')
-  
+  print(m)
+  print(res)
   assert res == m
   
 def test_se3_hat_commute():

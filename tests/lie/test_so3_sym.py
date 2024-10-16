@@ -9,7 +9,7 @@ def test_so3_hat():
   x = sp.symbols("x_{0:3}", Integer=True)
   v = sp.Matrix(x)
   
-  m = sp.Matrix([[0., -v[2], v[1]],[v[2], 0., -v[0]],[-v[1], v[0], 0.]])
+  m = sp.Matrix([[0, -v[2], v[1]],[v[2], 0, -v[0]],[-v[1], v[0], 0]])
   
   res = mr.SO3.hat(v, 'sympy')
   
