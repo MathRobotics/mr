@@ -97,7 +97,7 @@ class SE3(LieAbstract):
     return vec
   
   @staticmethod
-  def mat(vec, a = 1., LIB = 'numpy'):
+  def exp(vec, a = 1., LIB = 'numpy'):
     '''
     同次変換行列の計算
     sympyの場合,vec[0:3]の大きさは1を想定
@@ -232,7 +232,7 @@ class SE3(LieAbstract):
     return mat
 
   @staticmethod
-  def integ_mat(vec, a = 1., LIB = 'numpy'):
+  def exp_integ(vec, a = 1., LIB = 'numpy'):
     '''
     sympyの場合,vec[0:3]の大きさは1を想定
     '''
@@ -246,8 +246,8 @@ class SE3(LieAbstract):
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
     mat = zeros((4,4), LIB)
-    mat[0:3,0:3] = SO3.integ_mat(rot, a, LIB)
-    V = SO3.integ2nd_mat(rot, a, LIB)
+    mat[0:3,0:3] = SO3.exp_integ(rot, a, LIB)
+    V = SO3.exp_integ2nd(rot, a, LIB)
 
     mat[0:3,3] = V @ pos
     mat[3,3] = 1
@@ -278,13 +278,13 @@ class SE3(LieAbstract):
     return vec
   
   @staticmethod
-  def adj_mat(vec, a = 1., LIB = 'numpy'):
+  def exp_adj(vec, a = 1., LIB = 'numpy'):
     '''
     空間変換行列の計算
     sympyの場合,vec[0:3]の大きさは1を想定
     '''
 
-    h = SE3.mat(vec, a, LIB = 'numpy')
+    h = SE3.exp(vec, a, LIB = 'numpy')
 
     mat = zeros((6,6), LIB)
     mat[0:3,0:3] = h[0:3,0:3]
@@ -294,7 +294,7 @@ class SE3(LieAbstract):
     return mat
   
   @staticmethod
-  def adj_integ_mat(vec, a, LIB = 'numpy'):
+  def exp_integ_adj(vec, a, LIB = 'numpy'):
     """
       回転行列の積分の計算
       sympyの場合,vec[0:3]の大きさは1を想定
@@ -306,7 +306,7 @@ class SE3(LieAbstract):
     else:
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
     
-    r = SO3.integ_mat(rot, a, LIB)
+    r = SO3.exp_integ(rot, a, LIB)
 
     mat = zeros((6,6), LIB)
     mat[0:3,0:3] = r
@@ -344,12 +344,12 @@ class SE3wre(SE3):
     return -mat
   
   @staticmethod
-  def mat(vec, a, LIB = 'numpy'):
-    return SE3.adj_mat(vec, a, LIB).transpose()
+  def exp(vec, a, LIB = 'numpy'):
+    return SE3.exp_adj(vec, a, LIB).transpose()
   
   @staticmethod
-  def integ_mat(vec, a, LIB = 'numpy'):
-    return SE3.adj_integ_mat(vec, a, LIB).transpose()
+  def exp_integ(vec, a, LIB = 'numpy'):
+    return SE3.exp_integ_adj(vec, a, LIB).transpose()
 
 '''
   Khalil, et al. 1995

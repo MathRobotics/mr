@@ -35,12 +35,12 @@ def test_so3_vee():
 
   assert res == v
 
-def test_so3_mat():
+def test_so3_exp():
   a = sp.symbols('a')
   x = sp.symbols("x_{0:3}", Integer=True)
   v = sp.Matrix(x)
   
-  r = mr.SO3.mat(v, a, 'sympy')
+  r = mr.SO3.exp(v, a, 'sympy')
 
   angle = np.random.rand(1)
   vec = np.random.rand(3)
@@ -50,16 +50,16 @@ def test_so3_mat():
   res = mr.sympy_subs_mat(r, x, vec)
   res = res.subs([(a, angle[0])]) 
   
-  m = mr.SO3.mat(vec, angle)
+  m = mr.SO3.exp(vec, angle)
   
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
   
-def test_so3_integ_mat():
+def test_so3_exp_integ():
   a = sp.symbols('a')
   x = sp.symbols("x_{0:3}", Integer=True)
   v = sp.Matrix(x)
   
-  r = mr.SO3.integ_mat(v, a, 'sympy')
+  r = mr.SO3.exp_integ(v, a, 'sympy')
 
   angle = np.random.rand(1)
   vec = np.random.rand(3)
@@ -69,16 +69,16 @@ def test_so3_integ_mat():
   res = mr.sympy_subs_mat(r, x, vec)
   res = res.subs([(a, angle[0])]) 
   
-  m = mr.SO3.integ_mat(vec, angle)
+  m = mr.SO3.exp_integ(vec, angle)
   
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
   
-def test_so3_integ2nd_mat():
+def test_so3_exp_integ2nd():
   a = sp.symbols('a')
   x = sp.symbols("x_{0:3}", Integer=True)
   v = sp.Matrix(x)
   
-  r = mr.SO3.integ2nd_mat(v, a, 'sympy')
+  r = mr.SO3.exp_integ2nd(v, a, 'sympy')
 
   angle = np.random.rand(1)
   vec = np.random.rand(3)
@@ -88,7 +88,7 @@ def test_so3_integ2nd_mat():
   res = mr.sympy_subs_mat(r, x, vec)
   res = res.subs([(a, angle[0])]) 
   
-  m = mr.SO3.integ2nd_mat(vec, angle)
+  m = mr.SO3.exp_integ2nd(vec, angle)
   
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
   

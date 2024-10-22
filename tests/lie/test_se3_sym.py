@@ -43,12 +43,12 @@ def test_se3_vee():
 
   assert res == v
 
-def test_se3_mat():
+def test_se3_exp():
   a = sp.symbols('a')
   x = sp.symbols("x_{0:6}", Integer=True)
   v = sp.Matrix(x)
   
-  r = mr.SE3.mat(v, a, 'sympy')
+  r = mr.SE3.exp(v, a, 'sympy')
 
   angle = np.random.rand(1)
   vec = np.random.rand(6)
@@ -58,16 +58,16 @@ def test_se3_mat():
   res = mr.sympy_subs_mat(r, x, vec)
   res = res.subs([(a, angle[0])]) 
   
-  m = mr.SE3.mat(vec, angle)
+  m = mr.SE3.exp(vec, angle)
 
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
   
-def test_se3_integ_mat():
+def test_se3_exp_integ():
   a = sp.symbols('a')
   x = sp.symbols("x_{0:6}", Integer=True)
   v = sp.Matrix(x)
   
-  r = mr.SE3.integ_mat(v, a, 'sympy')
+  r = mr.SE3.exp_integ(v, a, 'sympy')
 
   angle = np.random.rand(1)
   vec = np.random.rand(6)
@@ -77,7 +77,7 @@ def test_se3_integ_mat():
   res = mr.sympy_subs_mat(r, x, vec)
   res = res.subs([(a, angle[0])]) 
   
-  m = mr.SE3.integ_mat(vec, angle)
+  m = mr.SE3.exp_integ(vec, angle)
   
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
   
