@@ -134,10 +134,10 @@ def test_se3_adj_hat_commute():
   
   np.testing.assert_allclose(res1, res2)
   
-def test_se3_adj_mat():
+def test_se3_exp_adj():
   v = np.random.rand(6)
   a = np.random.rand(1)
-  res = mr.SE3.adj_mat(v, a)
+  res = mr.SE3.exp_adj(v, a)
 
   m = expm(a*mr.SE3.adj_hat(v))
   
@@ -167,9 +167,9 @@ def test_se3_jac_lie_wrt_scaler():
   
   res = mr.jac_lie_wrt_scaler(mr.SE3, v, a, dv)
   
-  r = mr.SE3.mat(v, a)
+  r = mr.SE3.exp(v, a)
   v_ = v + dv*eps
-  r_ = mr.SE3.mat(v_, a)
+  r_ = mr.SE3.exp(v_, a)
   
   dr = (r_ - r) / eps
   
@@ -202,9 +202,9 @@ def test_se3_jac_adj_lie_wrt_scaler():
   
   res = mr.jac_adj_lie_wrt_scaler(mr.SE3, v, a, dv)
   
-  r = mr.SE3.adj_mat(v, a)
+  r = mr.SE3.exp_adj(v, a)
   v_ = v + dv*eps
-  r_ = mr.SE3.adj_mat(v_, a)
+  r_ = mr.SE3.exp_adj(v_, a)
   
   dr = (r_ - r) / eps
   
