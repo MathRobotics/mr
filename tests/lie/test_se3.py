@@ -112,7 +112,7 @@ def test_se3_exp_integ():
   
   np.testing.assert_allclose(res, m)
   
-def test_se3_adj_hat():
+def test_se3_hat_adj():
   v = np.random.rand(6)  
   m = np.array([[0., -v[2], v[1], 0., 0., 0.],
                 [v[2], 0., -v[0], 0., 0., 0.],
@@ -121,16 +121,16 @@ def test_se3_adj_hat():
                 [v[5], 0., -v[3], v[2], 0., -v[0]],
                 [-v[4], v[3], 0., -v[1], v[0], 0.]])
   
-  res = mr.SE3.adj_hat(v)
+  res = mr.SE3.hat_adj(v)
 
   np.testing.assert_array_equal(res, m)
   
-def test_se3_adj_hat_commute():
+def test_se3_hat_adj_commute():
   v1 = np.random.rand(6)
   v2 = np.random.rand(6)
   
-  res1 = mr.SE3.adj_hat(v1) @ v2
-  res2 = mr.SE3.adj_hat_commute(v2) @ v1
+  res1 = mr.SE3.hat_adj(v1) @ v2
+  res2 = mr.SE3.hat_commute_adj(v2) @ v1
   
   np.testing.assert_allclose(res1, res2)
   
@@ -139,7 +139,7 @@ def test_se3_exp_adj():
   a = np.random.rand(1)
   res = mr.SE3.exp_adj(v, a)
 
-  m = expm(a*mr.SE3.adj_hat(v))
+  m = expm(a*mr.SE3.hat_adj(v))
   
   np.testing.assert_allclose(res, m)
   
@@ -150,7 +150,7 @@ def test_se3_exp_integ_adj():
   res = mr.SE3.exp_integ_adj(vec, angle)
 
   def integrad(s):
-    return expm(s*mr.SE3.adj_hat(vec))
+    return expm(s*mr.SE3.hat_adj(vec))
   
   m, _ = integrate.quad_vec(integrad, 0, angle)
   

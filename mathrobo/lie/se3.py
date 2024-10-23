@@ -255,7 +255,7 @@ class SE3(LieAbstract):
     return mat
   
   @staticmethod
-  def adj_hat(vec, LIB = 'numpy'):
+  def hat_adj(vec, LIB = 'numpy'):
     mat = zeros((6,6), LIB)
 
     mat[0:3,0:3] = SO3.hat(vec[0:3], LIB)
@@ -265,11 +265,11 @@ class SE3(LieAbstract):
     return mat
   
   @staticmethod
-  def adj_hat_commute(vec, LIB = 'numpy'):
-    return -SE3.adj_hat(vec, LIB)
+  def hat_commute_adj(vec, LIB = 'numpy'):
+    return -SE3.hat_adj(vec, LIB)
 
   @staticmethod
-  def adj_vee(vec_hat, LIB = 'numpy'):
+  def vee_adj(vec_hat, LIB = 'numpy'):
     vec = zeros(6, LIB)
     
     vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3], LIB)+SO3.vee(vec_hat[3:6,3:6]), LIB)
