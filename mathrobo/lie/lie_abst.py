@@ -48,11 +48,11 @@ class LieAbstract:
     pass
   
   @staticmethod
-  def adj_hat(vec, LIB = 'numpy'):
+  def hat_adj(vec, LIB = 'numpy'):
     pass
 
   @staticmethod
-  def adj_hat_commute(vec, LIB = 'numpy'):
+  def hat_commute_adj(vec, LIB = 'numpy'):
     pass
   
   @staticmethod

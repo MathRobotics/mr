@@ -191,11 +191,11 @@ class SO3(LieAbstract):
     return mat
   
   @staticmethod
-  def adj_hat(vec, LIB = 'numpy'):
+  def hat_adj(vec, LIB = 'numpy'):
     return SO3.hat(vec, LIB)
   
   @staticmethod
-  def adj_hat_commute(vec, LIB = 'numpy'):
+  def hat_commute_adj(vec, LIB = 'numpy'):
     return SO3.hat_commute(vec, LIB)
   
   @staticmethod

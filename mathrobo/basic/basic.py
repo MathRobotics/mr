@@ -90,7 +90,7 @@ def jac_adj_lie_wrt_scaler(lie, vec, a, dvec, LIB = 'numpy'):
   m = lie.exp_adj(vec, a, LIB)
   integ_m = -lie.exp_integ_adj(vec, -a, LIB)
 
-  return m @ lie.adj_hat(integ_m @ dvec, LIB)
+  return m @ lie.hat_adj(integ_m @ dvec, LIB)
 
 def jac_lie_v_wrt_vector(lie, vec, a, v, LIB = 'numpy'):
   m = lie.exp(vec, a, LIB)
