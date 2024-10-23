@@ -117,9 +117,9 @@ def test_so3_jac_lie_wrt_scaler():
   
   res = mr.jac_lie_wrt_scaler(mr.SO3, v, a, dv)
   
-  r = mr.SO3.mat(v, a)
+  r = mr.SO3.exp(v, a)
   v_ = v + dv*eps
-  r_ = mr.SO3.mat(v_, a)
+  r_ = mr.SO3.exp(v_, a)
   
   dr = (r_ - r) / eps
   

@@ -81,20 +81,20 @@ def gq_integrate(func, a, b, digit = 5, LIB = 'numpy'):
       raise ValueError("This method for 'numpy'")
 
 def jac_lie_wrt_scaler(lie, vec, a, dvec, LIB = 'numpy'):
-  m = lie.mat(vec, a, LIB)
-  integ_m = -lie.adj_integ_mat(vec, -a, LIB)
+  m = lie.exp(vec, a, LIB)
+  integ_m = -lie.exp_integ_adj(vec, -a, LIB)
 
   return m @ lie.hat(integ_m @ dvec, LIB)
 
 def jac_adj_lie_wrt_scaler(lie, vec, a, dvec, LIB = 'numpy'):
-  m = lie.adj_mat(vec, a, LIB)
-  integ_m = -lie.adj_integ_mat(vec, -a, LIB)
+  m = lie.exp_adj(vec, a, LIB)
+  integ_m = -lie.exp_integ_adj(vec, -a, LIB)
 
   return m @ lie.adj_hat(integ_m @ dvec, LIB)
 
 def jac_lie_v_wrt_vector(lie, vec, a, v, LIB = 'numpy'):
-  m = lie.mat(vec, a, LIB)
-  integ_m = -lie.adj_integ_mat(vec, -a, LIB)
+  m = lie.exp(vec, a, LIB)
+  integ_m = -lie.exp_integ_adj(vec, -a, LIB)
 
   return m @ lie.hat_commute(v, LIB) @ integ_m
 

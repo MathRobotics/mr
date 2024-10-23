@@ -112,8 +112,8 @@ class SE3(LieAbstract):
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
     mat = zeros((4,4), LIB)
-    mat[0:3,0:3] = SO3.mat(rot, a, LIB)
-    V = SO3.integ_mat(rot, a, LIB)
+    mat[0:3,0:3] = SO3.exp(rot, a, LIB)
+    V = SO3.exp_integ(rot, a, LIB)
 
     mat[0:3,3] = V @ pos
     mat[3,3] = 1
