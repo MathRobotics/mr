@@ -16,8 +16,7 @@ def test_se3_hat():
     [0,     0,    0,    0]])
   
   res = mr.SE3.hat(v, 'sympy')
-  print(m)
-  print(res)
+
   assert res == m
   
 def test_se3_hat_commute():
