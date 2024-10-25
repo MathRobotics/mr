@@ -12,13 +12,13 @@ class SE3(LieAbstract):
     self._pos = pos
     self.lib = LIB
   
-  def matrix(self):
+  def mat(self):
     mat = identity(4)
     mat[0:3,0:3] = self._rot
     mat[0:3,3] = self._pos
     return mat
   
-  def set_matrix(self, mat = identity(4)):
+  def set_mat(self, mat = identity(4)):
     self._rot = mat[0:3,0:3]
     self._pos = mat[0:3,3]
     return mat

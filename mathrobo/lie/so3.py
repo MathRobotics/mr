@@ -10,10 +10,10 @@ class SO3(LieAbstract):
     self._rot = r
     self._lib = LIB
     
-  def matrix(self):
+  def mat(self):
     return self._rot
   
-  def set_matrix(self, mat = identity(4)):
+  def set_mat(self, mat = identity(4)):
     self._rot = mat
     
   def inverse(self):
