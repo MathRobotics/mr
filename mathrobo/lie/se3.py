@@ -32,7 +32,7 @@ class SE3(LieAbstract):
   def inverse(self):
     self._rot = self._rot.transpose()
     self._pos = -self._rot@self._pos
-    return self.matrix()
+    return self.mat()
   
   def adjoint(self):
     mat = zeros((6,6), self.lib)
