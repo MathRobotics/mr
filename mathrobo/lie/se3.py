@@ -316,7 +316,7 @@ class SE3(LieAbstract):
     return mat
   
 class SE3wre(SE3):
-  def matrix(self):
+  def mat(self):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
