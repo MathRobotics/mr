@@ -9,7 +9,7 @@ def test_se3():
   res = mr.SE3()
   e = np.identity(4)
 
-  np.testing.assert_array_equal(res.matrix(), e)
+  np.testing.assert_array_equal(res.mat(), e)
   
 def test_se3_inv():
   v = np.random.rand(6)
@@ -18,7 +18,7 @@ def test_se3_inv():
   
   mat = mr.SE3(r, v[3:6])
   
-  res = mat.matrix() @ mat.inverse()
+  res = mat.mat() @ mat.inverse()
   
   e = np.identity(4)
   
@@ -46,7 +46,7 @@ def test_se3_set_adj():
   res = mr.SE3()
   res.set_adj_mat(mat.adjoint())
   
-  np.testing.assert_allclose(res.matrix(), mat.matrix())
+  np.testing.assert_allclose(res.mat(), mat.mat())
   
 def test_se3_adj_inv():
   v = np.random.rand(6)
