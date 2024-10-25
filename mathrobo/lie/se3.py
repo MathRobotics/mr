@@ -31,21 +31,21 @@ class SE3(LieAbstract):
     
   def inverse(self):
     self._rot = self._rot.transpose()
-    self._pos = -self._rot@self._pos
+    self._pos = -self._rot @ self._pos
     return self.mat()
   
   def adjoint(self):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
-    mat[3:6,0:3] = SO3.hat(self._pos, self.lib)@self._rot
+    mat[3:6,0:3] = SO3.hat(self._pos, self.lib) @ self._rot
     mat[3:6,3:6] = self._rot
     
     return mat
   
   def set_adj_mat(self, mat = identity(6)):
     self._rot = (mat[0:3,0:3] + mat[3:6,3:6]) * 0.5
-    self._pos = SO3.vee(mat[3:6,0:3]@self._rot.transpose(), self.lib)
+    self._pos = SO3.vee(mat[3:6,0:3] @ self._rot.transpose(), self.lib)
 
   def adj_inv(self):
     mat = zeros((6,6), self.lib)
@@ -136,9 +136,9 @@ class SE3(LieAbstract):
       if iszero(theta):
         return 0.5*a*a*SO3.hat(vec[3:6])
       else:
-        u, v, w = vec[0:3]/theta
+        u, v, w = vec[0:3] / theta
         x, y, z = vec[3:6]
-        k = 1./(theta*theta)
+        k = 1. / (theta*theta)
         
     elif LIB == 'sympy':
       a_ = a
@@ -272,7 +272,7 @@ class SE3(LieAbstract):
   def vee_adj(vec_hat, LIB = 'numpy'):
     vec = zeros(6, LIB)
     
-    vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3], LIB)+SO3.vee(vec_hat[3:6,3:6]), LIB)
+    vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3], LIB) + SO3.vee(vec_hat[3:6,3:6]), LIB)
     vec[3,6] = SO3.vee(vec_hat[3:6,0:3], LIB)
 
     return vec
@@ -288,7 +288,7 @@ class SE3(LieAbstract):
 
     mat = zeros((6,6), LIB)
     mat[0:3,0:3] = h[0:3,0:3]
-    mat[3:6,0:3] = SO3.hat(h[0:3,3], LIB)@h[0:3,0:3]
+    mat[3:6,0:3] = SO3.hat(h[0:3,3], LIB) @ h[0:3,0:3]
     mat[3:6,3:6] = h[0:3,0:3]
 
     return mat
@@ -320,7 +320,7 @@ class SE3wre(SE3):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
-    mat[0:3,3:6] = SO3.hat(self._pos, self.lib)@self._rot
+    mat[0:3,3:6] = SO3.hat(self._pos, self.lib) @ self._rot
     mat[3:6,3:6] = self._rot
     
     return mat
