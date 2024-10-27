@@ -315,7 +315,7 @@ class SE3(LieAbstract):
 
     return mat
   
-class SE3wre(SE3):
+class SE3wrench(SE3):
   def mat(self):
     mat = zeros((6,6), self.lib)
     
@@ -354,7 +354,7 @@ class SE3wre(SE3):
 '''
   Khalil, et al. 1995
 '''
-class SE3ine(SE3):
+class SE3inertia(SE3):
   @staticmethod
   def hat(vec, LIB = 'numpy'):
     mat = np.zeros((6,6),LIB)

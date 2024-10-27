@@ -206,7 +206,7 @@ class SO3(LieAbstract):
   def exp_integ_adj(vec, a, LIB = 'numpy'):
     return SO3.exp_integ(vec, a, LIB)
   
-class SO3wre(SO3):
+class SO3wrench(SO3):
   @staticmethod
   def hat(vec, LIB = 'numpy'):
     return -SO3.hat(vec, LIB)
@@ -223,7 +223,7 @@ class SO3wre(SO3):
   def exp_integ(vec, a, LIB = 'numpy'):
     return SO3.exp_integ(vec, a, LIB).transpose()
   
-class SO3ine(SO3):
+class SO3inertia(SO3):
   @staticmethod
   def hat(vec, LIB = 'numpy'):
     mat = zeros((3,3), LIB)
