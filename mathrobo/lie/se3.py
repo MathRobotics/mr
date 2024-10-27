@@ -324,6 +324,15 @@ class SE3wrench(SE3):
     mat[3:6,3:6] = self._rot
     
     return mat
+  
+  def adjoint(self):
+    mat = zeros((6,6), self.lib)
+    
+    mat[0:3,0:3] = self._rot
+    mat[0:3,3:6] = SO3.hat(self._pos, self.lib) @ self._rot
+    mat[3:6,3:6] = self._rot
+    
+    return mat
 
   @staticmethod
   def hat(vec, LIB = 'numpy'):
