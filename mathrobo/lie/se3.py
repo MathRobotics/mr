@@ -123,7 +123,7 @@ class SE3(LieAbstract):
   @staticmethod
   def __integ_p_cross_r(vec, a = 1., LIB = 'numpy'):
     """
-      回転行列の積分の計算
+      p x Rの積分の計算
       sympyの場合,vec[0:3]の大きさは1を想定
     """
     if LIB == 'numpy':
@@ -280,7 +280,7 @@ class SE3(LieAbstract):
   @staticmethod
   def exp_adj(vec, a = 1., LIB = 'numpy'):
     '''
-    空間変換行列の計算
+    SE3の随伴表現の計算
     sympyの場合,vec[0:3]の大きさは1を想定
     '''
 
@@ -296,7 +296,7 @@ class SE3(LieAbstract):
   @staticmethod
   def exp_integ_adj(vec, a, LIB = 'numpy'):
     """
-      回転行列の積分の計算
+      SE3の随伴表現の積分の計算
       sympyの場合,vec[0:3]の大きさは1を想定
     """
     if LIB == 'numpy':
