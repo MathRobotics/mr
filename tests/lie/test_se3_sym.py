@@ -103,7 +103,7 @@ def test_se3_jac_lie_wrt_scaler():
   
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
 
-# def test_so3_jac_lie_wrt_scaler_integ():
+# def test_se3_jac_lie_wrt_scaler_integ():
 #   a_ = sp.symbols('a_')
 #   a = sp.symbols('a')
 #   x = sp.symbols("x_{0:6}", Integer=True)
@@ -125,8 +125,8 @@ def test_se3_jac_lie_wrt_scaler():
   
 #   m, _ = integrate.quad_vec(integrad, 0, angle)
   
-#   res = sympy_subs_mat(r, x, vec)
-#   res = sympy_subs_mat(res, dx, dvec)
+#   res = mr.sympy_subs_mat(r, x, vec)
+#   res = mr.sympy_subs_mat(res, dx, dvec)
 #   res = res.subs([(a, angle[0])]) 
   
 #   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
