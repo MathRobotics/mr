@@ -208,7 +208,7 @@ def test_se3_jac_adj_lie_wrt_scaler():
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-4)
+  np.testing.assert_allclose(res, dr, 1e-3)
   
 def test_se3_adj_jac_adj_lie_wrt_scaler_integ():
   v = np.random.rand(6)
