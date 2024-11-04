@@ -31,11 +31,11 @@ class LieAbstract:
     pass  
   
   @staticmethod
-  def mat(vec, a, LIB = 'numpy'):
+  def exp(vec, a, LIB = 'numpy'):
     pass
 
   @staticmethod
-  def integ_mat(vec, a, LIB = 'numpy'):
+  def exp_integ(vec, a, LIB = 'numpy'):
     pass
   
   def inverse(self):
@@ -48,17 +48,17 @@ class LieAbstract:
     pass
   
   @staticmethod
-  def adj_hat(vec, LIB = 'numpy'):
+  def hat_adj(vec, LIB = 'numpy'):
     pass
 
   @staticmethod
-  def adj_hat_commute(vec, LIB = 'numpy'):
+  def hat_commute_adj(vec, LIB = 'numpy'):
     pass
   
   @staticmethod
-  def adj_mat(vec, a, LIB = 'numpy'):
+  def exp_adj(vec, a, LIB = 'numpy'):
     pass
   
   @staticmethod
-  def adj_integ_mat(vec, a, LIB = 'numpy'):
+  def exp_integ_adj(vec, a, LIB = 'numpy'):
     pass

@@ -10,10 +10,10 @@ class SO3(LieAbstract):
     self._rot = r
     self._lib = LIB
     
-  def matrix(self):
+  def mat(self):
     return self._rot
   
-  def set_matrix(self, mat = identity(4)):
+  def set_mat(self, mat = identity(4)):
     self._rot = mat
     
   def inverse(self):
@@ -53,7 +53,7 @@ class SO3(LieAbstract):
     return vec 
 
   @staticmethod
-  def mat(vec, a = 1., LIB = 'numpy'):
+  def exp(vec, a = 1., LIB = 'numpy'):
     """
       回転行列の計算
       sympyの場合,vecの大きさは1を想定
@@ -98,7 +98,7 @@ class SO3(LieAbstract):
     return mat
   
   @staticmethod
-  def integ_mat(vec, a = 1., LIB = 'numpy'):
+  def exp_integ(vec, a = 1., LIB = 'numpy'):
     """
       回転行列の積分の計算
       sympyの場合,vecの大きさは1を想定
@@ -144,7 +144,7 @@ class SO3(LieAbstract):
     return mat
   
   @staticmethod
-  def integ2nd_mat(vec, a = 1., LIB = 'numpy'):
+  def exp_integ2nd(vec, a = 1., LIB = 'numpy'):
     """
       回転行列の積分の計算
       sympyの場合,vecの大きさは1を想定
@@ -191,22 +191,22 @@ class SO3(LieAbstract):
     return mat
   
   @staticmethod
-  def adj_hat(vec, LIB = 'numpy'):
+  def hat_adj(vec, LIB = 'numpy'):
     return SO3.hat(vec, LIB)
   
   @staticmethod
-  def adj_hat_commute(vec, LIB = 'numpy'):
+  def hat_commute_adj(vec, LIB = 'numpy'):
     return SO3.hat_commute(vec, LIB)
   
   @staticmethod
-  def adj_mat(vec, a, LIB = 'numpy'):
-    return SO3.mat(vec, a, LIB)
+  def exp_adj(vec, a, LIB = 'numpy'):
+    return SO3.exp(vec, a, LIB)
   
   @staticmethod
-  def adj_integ_mat(vec, a, LIB = 'numpy'):
-    return SO3.integ_mat(vec, a, LIB)
+  def exp_integ_adj(vec, a, LIB = 'numpy'):
+    return SO3.exp_integ(vec, a, LIB)
   
-class SO3wre(SO3):
+class SO3wrench(SO3):
   @staticmethod
   def hat(vec, LIB = 'numpy'):
     return -SO3.hat(vec, LIB)
@@ -216,14 +216,14 @@ class SO3wre(SO3):
     return SO3.hat(vec, LIB)
   
   @staticmethod
-  def mat(vec, a, LIB = 'numpy'):
-    return SO3.mat(vec, a, LIB).transpose()
+  def exp(vec, a, LIB = 'numpy'):
+    return SO3.exp(vec, a, LIB).transpose()
   
   @staticmethod
-  def integ_mat(vec, a, LIB = 'numpy'):
-    return SO3.integ_mat(vec, a, LIB).transpose()
+  def exp_integ(vec, a, LIB = 'numpy'):
+    return SO3.exp_integ(vec, a, LIB).transpose()
   
-class SO3ine(SO3):
+class SO3inertia(SO3):
   @staticmethod
   def hat(vec, LIB = 'numpy'):
     mat = zeros((3,3), LIB)
@@ -258,9 +258,9 @@ class SO3ine(SO3):
     return mat
   
   @staticmethod
-  def mat(vec, a, LIB = 'numpy'):
-    return SO3.mat(vec, a, LIB).transpose()
+  def exp(vec, a, LIB = 'numpy'):
+    return SO3.exp(vec, a, LIB).transpose()
   
   @staticmethod
-  def integ_mat(vec, a, LIB = 'numpy'):
-    return SO3.integ_mat(vec, a, LIB).transpose()
+  def exp_integ(vec, a, LIB = 'numpy'):
+    return SO3.exp_integ(vec, a, LIB).transpose()

@@ -16,8 +16,7 @@ def test_se3_hat():
     [0,     0,    0,    0]])
   
   res = mr.SE3.hat(v, 'sympy')
-  print(m)
-  print(res)
+
   assert res == m
   
 def test_se3_hat_commute():
@@ -43,12 +42,12 @@ def test_se3_vee():
 
   assert res == v
 
-def test_se3_mat():
+def test_se3_exp():
   a = sp.symbols('a')
   x = sp.symbols("x_{0:6}", Integer=True)
   v = sp.Matrix(x)
   
-  r = mr.SE3.mat(v, a, 'sympy')
+  r = mr.SE3.exp(v, a, 'sympy')
 
   angle = np.random.rand(1)
   vec = np.random.rand(6)
@@ -58,16 +57,16 @@ def test_se3_mat():
   res = mr.sympy_subs_mat(r, x, vec)
   res = res.subs([(a, angle[0])]) 
   
-  m = mr.SE3.mat(vec, angle)
+  m = mr.SE3.exp(vec, angle)
 
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
   
-def test_se3_integ_mat():
+def test_se3_exp_integ():
   a = sp.symbols('a')
   x = sp.symbols("x_{0:6}", Integer=True)
   v = sp.Matrix(x)
   
-  r = mr.SE3.integ_mat(v, a, 'sympy')
+  r = mr.SE3.exp_integ(v, a, 'sympy')
 
   angle = np.random.rand(1)
   vec = np.random.rand(6)
@@ -77,7 +76,7 @@ def test_se3_integ_mat():
   res = mr.sympy_subs_mat(r, x, vec)
   res = res.subs([(a, angle[0])]) 
   
-  m = mr.SE3.integ_mat(vec, angle)
+  m = mr.SE3.exp_integ(vec, angle)
   
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
   
@@ -104,7 +103,7 @@ def test_se3_jac_lie_wrt_scaler():
   
   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))
 
-# def test_so3_jac_lie_wrt_scaler_integ():
+# def test_se3_jac_lie_wrt_scaler_integ():
 #   a_ = sp.symbols('a_')
 #   a = sp.symbols('a')
 #   x = sp.symbols("x_{0:6}", Integer=True)
@@ -126,8 +125,8 @@ def test_se3_jac_lie_wrt_scaler():
   
 #   m, _ = integrate.quad_vec(integrad, 0, angle)
   
-#   res = sympy_subs_mat(r, x, vec)
-#   res = sympy_subs_mat(res, dx, dvec)
+#   res = mr.sympy_subs_mat(r, x, vec)
+#   res = mr.sympy_subs_mat(res, dx, dvec)
 #   res = res.subs([(a, angle[0])]) 
   
 #   np.testing.assert_allclose(m, mr.sympy_to_numpy(res))

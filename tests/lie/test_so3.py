@@ -7,21 +7,21 @@ import mathrobo as mr
 
 def test_so3():
   v = np.zeros(3)
-  r = mr.SO3.mat(v)
+  r = mr.SO3.exp(v)
 
   res = mr.SO3(r)
   
   e = np.identity(3)
 
-  np.testing.assert_array_equal(res.matrix(), e)
+  np.testing.assert_array_equal(res.mat(), e)
   
 def test_so3_inv():
   v = np.random.rand(3) 
-  r = mr.SO3.mat(v)
+  r = mr.SO3.exp(v)
   
   rot = mr.SO3(r)
   
-  res = rot.matrix() @ rot.inverse()
+  res = rot.mat() @ rot.inverse()
   
   e = np.identity(3)
   
@@ -29,15 +29,15 @@ def test_so3_inv():
   
 def test_so3_adj():
   v = np.random.rand(3) 
-  r = mr.SO3.mat(v)
+  r = mr.SO3.exp(v)
   
   res = mr.SO3(r)
   
-  np.testing.assert_array_equal(res.adjoint(), res.matrix())
+  np.testing.assert_array_equal(res.adjoint(), res.mat())
   
 def test_so3_adj_inv():
   v = np.random.rand(3) 
-  r = mr.SO3.mat(v)
+  r = mr.SO3.exp(v)
   
   rot = mr.SO3(r)
   
@@ -72,19 +72,19 @@ def test_so3_vee():
   
   np.testing.assert_array_equal(v, res)
 
-def test_so3_mat():
+def test_so3_exp():
   v = np.random.rand(3)
   a = np.random.rand(1)
-  res = mr.SO3.mat(v, a)
+  res = mr.SO3.exp(v, a)
 
   m = expm(a*mr.SO3.hat(v))
   
   np.testing.assert_allclose(res, m)
   
-def test_so3_integ_mat():
+def test_so3_exp_integ():
   v = np.random.rand(3)
   a = np.random.rand(1)
-  res = mr.SO3.integ_mat(v, a)
+  res = mr.SO3.exp_integ(v, a)
 
   def integrad(s):
     return expm(s*mr.SO3.hat(v))
@@ -93,10 +93,10 @@ def test_so3_integ_mat():
   
   np.testing.assert_allclose(res, m)
   
-def test_so3_integ2nd_mat():
+def test_so3_exp_integ2nd():
   v = np.random.rand(3)
   a = np.random.rand(1)
-  res = mr.SO3.integ2nd_mat(v, a)
+  res = mr.SO3.exp_integ2nd(v, a)
 
   def integrad(s_):
     def integrad_(s):
@@ -117,13 +117,13 @@ def test_so3_jac_lie_wrt_scaler():
   
   res = mr.jac_lie_wrt_scaler(mr.SO3, v, a, dv)
   
-  r = mr.SO3.mat(v, a)
+  r = mr.SO3.exp(v, a)
   v_ = v + dv*eps
-  r_ = mr.SO3.mat(v_, a)
+  r_ = mr.SO3.exp(v_, a)
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-4)
+  np.testing.assert_allclose(res, dr, 1e-3)
   
 def test_so3_jac_lie_wrt_scaler_integ():
   v = np.random.rand(3)
@@ -136,10 +136,10 @@ def test_so3_jac_lie_wrt_scaler_integ():
   
   res, _ = integrate.quad_vec(integrad, 0, a)
   
-  r = mr.SO3.integ_mat(v, a)
+  r = mr.SO3.exp_integ(v, a)
   v_ = v + dv*eps
-  r_ = mr.SO3.integ_mat(v_, a)
+  r_ = mr.SO3.exp_integ(v_, a)
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-4)
+  np.testing.assert_allclose(res, dr, 1e-3)

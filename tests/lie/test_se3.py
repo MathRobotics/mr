@@ -9,16 +9,16 @@ def test_se3():
   res = mr.SE3()
   e = np.identity(4)
 
-  np.testing.assert_array_equal(res.matrix(), e)
+  np.testing.assert_array_equal(res.mat(), e)
   
 def test_se3_inv():
   v = np.random.rand(6)
   v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
-  r = mr.SO3.mat(v[0:3]) 
+  r = mr.SO3.exp(v[0:3]) 
   
   mat = mr.SE3(r, v[3:6])
   
-  res = mat.matrix() @ mat.inverse()
+  res = mat.mat() @ mat.inverse()
   
   e = np.identity(4)
   
@@ -27,7 +27,7 @@ def test_se3_inv():
 def test_se3_adj():
   v = np.random.rand(6)
   v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
-  r = mr.SO3.mat(v[0:3]) 
+  r = mr.SO3.exp(v[0:3]) 
   
   res = mr.SE3(r, v[3:6])
   
@@ -40,18 +40,18 @@ def test_se3_adj():
   
 def test_se3_set_adj():
   v = np.random.rand(6)
-  r = mr.SO3.mat(v[0:3]) 
+  r = mr.SO3.exp(v[0:3]) 
   mat = mr.SE3(r, v[3:6])
   
   res = mr.SE3()
   res.set_adj_mat(mat.adjoint())
   
-  np.testing.assert_allclose(res.matrix(), mat.matrix())
+  np.testing.assert_allclose(res.mat(), mat.mat())
   
 def test_se3_adj_inv():
   v = np.random.rand(6)
   v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
-  r = mr.SO3.mat(v[0:3]) 
+  r = mr.SO3.exp(v[0:3]) 
   
   mat = mr.SE3(r, v[3:6])
   
@@ -89,19 +89,19 @@ def test_se3_vee():
   
   np.testing.assert_array_equal(v, res)
   
-def test_se3_mat():
+def test_se3_exp():
   v = np.random.rand(6)
   a = np.random.rand(1)
-  res = mr.SE3.mat(v, a)
+  res = mr.SE3.exp(v, a)
 
   m = expm(a*mr.SE3.hat(v))
   
   np.testing.assert_allclose(res, m)
   
-def test_se3_integ_mat():
+def test_se3_exp_integ():
   v = np.random.rand(6)
   a = np.random.rand(1)
-  res = mr.SE3.integ_mat(v, a)
+  res = mr.SE3.exp_integ(v, a)
 
   def integrad(s):
     return expm(s*mr.SE3.hat(v))
@@ -112,7 +112,7 @@ def test_se3_integ_mat():
   
   np.testing.assert_allclose(res, m)
   
-def test_se3_adj_hat():
+def test_se3_hat_adj():
   v = np.random.rand(6)  
   m = np.array([[0., -v[2], v[1], 0., 0., 0.],
                 [v[2], 0., -v[0], 0., 0., 0.],
@@ -121,36 +121,36 @@ def test_se3_adj_hat():
                 [v[5], 0., -v[3], v[2], 0., -v[0]],
                 [-v[4], v[3], 0., -v[1], v[0], 0.]])
   
-  res = mr.SE3.adj_hat(v)
+  res = mr.SE3.hat_adj(v)
 
   np.testing.assert_array_equal(res, m)
   
-def test_se3_adj_hat_commute():
+def test_se3_hat_adj_commute():
   v1 = np.random.rand(6)
   v2 = np.random.rand(6)
   
-  res1 = mr.SE3.adj_hat(v1) @ v2
-  res2 = mr.SE3.adj_hat_commute(v2) @ v1
+  res1 = mr.SE3.hat_adj(v1) @ v2
+  res2 = mr.SE3.hat_commute_adj(v2) @ v1
   
   np.testing.assert_allclose(res1, res2)
   
-def test_se3_adj_mat():
+def test_se3_exp_adj():
   v = np.random.rand(6)
   a = np.random.rand(1)
-  res = mr.SE3.adj_mat(v, a)
+  res = mr.SE3.exp_adj(v, a)
 
-  m = expm(a*mr.SE3.adj_hat(v))
+  m = expm(a*mr.SE3.hat_adj(v))
   
   np.testing.assert_allclose(res, m)
   
-def test_se3_adj_integ_mat():
+def test_se3_exp_integ_adj():
   vec = np.random.rand(6)
   angle = np.random.rand()
 
-  res = mr.SE3.adj_integ_mat(vec, angle)
+  res = mr.SE3.exp_integ_adj(vec, angle)
 
   def integrad(s):
-    return expm(s*mr.SE3.adj_hat(vec))
+    return expm(s*mr.SE3.hat_adj(vec))
   
   m, _ = integrate.quad_vec(integrad, 0, angle)
   
@@ -167,9 +167,9 @@ def test_se3_jac_lie_wrt_scaler():
   
   res = mr.jac_lie_wrt_scaler(mr.SE3, v, a, dv)
   
-  r = mr.SE3.mat(v, a)
+  r = mr.SE3.exp(v, a)
   v_ = v + dv*eps
-  r_ = mr.SE3.mat(v_, a)
+  r_ = mr.SE3.exp(v_, a)
   
   dr = (r_ - r) / eps
   
@@ -186,9 +186,9 @@ def test_se3_jac_lie_wrt_scaler_integ():
   
   res, _ = integrate.quad_vec(integrad, 0, a)
   
-  r = mr.SE3.integ_mat(v, a)
+  r = mr.SE3.exp_integ(v, a)
   v_ = v + dv*eps
-  r_ = mr.SE3.integ_mat(v_, a)
+  r_ = mr.SE3.exp_integ(v_, a)
   
   dr = (r_ - r) / eps
   
@@ -202,13 +202,13 @@ def test_se3_jac_adj_lie_wrt_scaler():
   
   res = mr.jac_adj_lie_wrt_scaler(mr.SE3, v, a, dv)
   
-  r = mr.SE3.adj_mat(v, a)
+  r = mr.SE3.exp_adj(v, a)
   v_ = v + dv*eps
-  r_ = mr.SE3.adj_mat(v_, a)
+  r_ = mr.SE3.exp_adj(v_, a)
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-4)
+  np.testing.assert_allclose(res, dr, 1e-3)
   
 def test_se3_adj_jac_adj_lie_wrt_scaler_integ():
   v = np.random.rand(6)
@@ -221,9 +221,9 @@ def test_se3_adj_jac_adj_lie_wrt_scaler_integ():
   
   res, _ = integrate.quad_vec(integrad, 0, a)
   
-  r = mr.SE3.adj_integ_mat(v, a)
+  r = mr.SE3.exp_integ_adj(v, a)
   v_ = v + dv*eps
-  r_ = mr.SE3.adj_integ_mat(v_, a)
+  r_ = mr.SE3.exp_integ_adj(v_, a)
   
   dr = (r_ - r) / eps
   

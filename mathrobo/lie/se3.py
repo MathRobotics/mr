@@ -12,13 +12,13 @@ class SE3(LieAbstract):
     self._pos = pos
     self.lib = LIB
   
-  def matrix(self):
+  def mat(self):
     mat = identity(4)
     mat[0:3,0:3] = self._rot
     mat[0:3,3] = self._pos
     return mat
   
-  def set_matrix(self, mat = identity(4)):
+  def set_mat(self, mat = identity(4)):
     self._rot = mat[0:3,0:3]
     self._pos = mat[0:3,3]
     return mat
@@ -31,21 +31,21 @@ class SE3(LieAbstract):
     
   def inverse(self):
     self._rot = self._rot.transpose()
-    self._pos = -self._rot@self._pos
-    return self.matrix()
+    self._pos = -self._rot @ self._pos
+    return self.mat()
   
   def adjoint(self):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
-    mat[3:6,0:3] = SO3.hat(self._pos, self.lib)@self._rot
+    mat[3:6,0:3] = SO3.hat(self._pos, self.lib) @ self._rot
     mat[3:6,3:6] = self._rot
     
     return mat
   
   def set_adj_mat(self, mat = identity(6)):
     self._rot = (mat[0:3,0:3] + mat[3:6,3:6]) * 0.5
-    self._pos = SO3.vee(mat[3:6,0:3]@self._rot.transpose(), self.lib)
+    self._pos = SO3.vee(mat[3:6,0:3] @ self._rot.transpose(), self.lib)
 
   def adj_inv(self):
     mat = zeros((6,6), self.lib)
@@ -97,7 +97,7 @@ class SE3(LieAbstract):
     return vec
   
   @staticmethod
-  def mat(vec, a = 1., LIB = 'numpy'):
+  def exp(vec, a = 1., LIB = 'numpy'):
     '''
     同次変換行列の計算
     sympyの場合,vec[0:3]の大きさは1を想定
@@ -112,8 +112,8 @@ class SE3(LieAbstract):
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
     mat = zeros((4,4), LIB)
-    mat[0:3,0:3] = SO3.mat(rot, a, LIB)
-    V = SO3.integ_mat(rot, a, LIB)
+    mat[0:3,0:3] = SO3.exp(rot, a, LIB)
+    V = SO3.exp_integ(rot, a, LIB)
 
     mat[0:3,3] = V @ pos
     mat[3,3] = 1
@@ -123,7 +123,7 @@ class SE3(LieAbstract):
   @staticmethod
   def __integ_p_cross_r(vec, a = 1., LIB = 'numpy'):
     """
-      回転行列の積分の計算
+      p x Rの積分の計算
       sympyの場合,vec[0:3]の大きさは1を想定
     """
     if LIB == 'numpy':
@@ -136,9 +136,9 @@ class SE3(LieAbstract):
       if iszero(theta):
         return 0.5*a*a*SO3.hat(vec[3:6])
       else:
-        u, v, w = vec[0:3]/theta
+        u, v, w = vec[0:3] / theta
         x, y, z = vec[3:6]
-        k = 1./(theta*theta)
+        k = 1. / (theta*theta)
         
     elif LIB == 'sympy':
       a_ = a
@@ -232,7 +232,7 @@ class SE3(LieAbstract):
     return mat
 
   @staticmethod
-  def integ_mat(vec, a = 1., LIB = 'numpy'):
+  def exp_integ(vec, a = 1., LIB = 'numpy'):
     '''
     sympyの場合,vec[0:3]の大きさは1を想定
     '''
@@ -246,8 +246,8 @@ class SE3(LieAbstract):
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
     mat = zeros((4,4), LIB)
-    mat[0:3,0:3] = SO3.integ_mat(rot, a, LIB)
-    V = SO3.integ2nd_mat(rot, a, LIB)
+    mat[0:3,0:3] = SO3.exp_integ(rot, a, LIB)
+    V = SO3.exp_integ2nd(rot, a, LIB)
 
     mat[0:3,3] = V @ pos
     mat[3,3] = 1
@@ -255,7 +255,7 @@ class SE3(LieAbstract):
     return mat
   
   @staticmethod
-  def adj_hat(vec, LIB = 'numpy'):
+  def hat_adj(vec, LIB = 'numpy'):
     mat = zeros((6,6), LIB)
 
     mat[0:3,0:3] = SO3.hat(vec[0:3], LIB)
@@ -265,38 +265,38 @@ class SE3(LieAbstract):
     return mat
   
   @staticmethod
-  def adj_hat_commute(vec, LIB = 'numpy'):
-    return -SE3.adj_hat(vec, LIB)
+  def hat_commute_adj(vec, LIB = 'numpy'):
+    return -SE3.hat_adj(vec, LIB)
 
   @staticmethod
-  def adj_vee(vec_hat, LIB = 'numpy'):
+  def vee_adj(vec_hat, LIB = 'numpy'):
     vec = zeros(6, LIB)
     
-    vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3], LIB)+SO3.vee(vec_hat[3:6,3:6]), LIB)
+    vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3], LIB) + SO3.vee(vec_hat[3:6,3:6]), LIB)
     vec[3,6] = SO3.vee(vec_hat[3:6,0:3], LIB)
 
     return vec
   
   @staticmethod
-  def adj_mat(vec, a = 1., LIB = 'numpy'):
+  def exp_adj(vec, a = 1., LIB = 'numpy'):
     '''
-    空間変換行列の計算
+    SE3の随伴表現の計算
     sympyの場合,vec[0:3]の大きさは1を想定
     '''
 
-    h = SE3.mat(vec, a, LIB = 'numpy')
+    h = SE3.exp(vec, a, LIB = 'numpy')
 
     mat = zeros((6,6), LIB)
     mat[0:3,0:3] = h[0:3,0:3]
-    mat[3:6,0:3] = SO3.hat(h[0:3,3], LIB)@h[0:3,0:3]
+    mat[3:6,0:3] = SO3.hat(h[0:3,3], LIB) @ h[0:3,0:3]
     mat[3:6,3:6] = h[0:3,0:3]
 
     return mat
   
   @staticmethod
-  def adj_integ_mat(vec, a, LIB = 'numpy'):
+  def exp_integ_adj(vec, a, LIB = 'numpy'):
     """
-      回転行列の積分の計算
+      SE3の随伴表現の積分の計算
       sympyの場合,vec[0:3]の大きさは1を想定
     """
     if LIB == 'numpy':
@@ -306,7 +306,7 @@ class SE3(LieAbstract):
     else:
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
     
-    r = SO3.integ_mat(rot, a, LIB)
+    r = SO3.exp_integ(rot, a, LIB)
 
     mat = zeros((6,6), LIB)
     mat[0:3,0:3] = r
@@ -315,12 +315,21 @@ class SE3(LieAbstract):
 
     return mat
   
-class SE3wre(SE3):
-  def matrix(self):
+class SE3wrench(SE3):
+  def mat(self):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
-    mat[0:3,3:6] = SO3.hat(self._pos, self.lib)@self._rot
+    mat[0:3,3:6] = SO3.hat(self._pos, self.lib) @ self._rot
+    mat[3:6,3:6] = self._rot
+    
+    return mat
+  
+  def adjoint(self):
+    mat = zeros((6,6), self.lib)
+    
+    mat[0:3,0:3] = self._rot
+    mat[0:3,3:6] = SO3.hat(self._pos, self.lib) @ self._rot
     mat[3:6,3:6] = self._rot
     
     return mat
@@ -344,17 +353,17 @@ class SE3wre(SE3):
     return -mat
   
   @staticmethod
-  def mat(vec, a, LIB = 'numpy'):
-    return SE3.adj_mat(vec, a, LIB).transpose()
+  def exp(vec, a, LIB = 'numpy'):
+    return SE3.exp_adj(vec, a, LIB).transpose()
   
   @staticmethod
-  def integ_mat(vec, a, LIB = 'numpy'):
-    return SE3.adj_integ_mat(vec, a, LIB).transpose()
+  def exp_integ(vec, a, LIB = 'numpy'):
+    return SE3.exp_integ_adj(vec, a, LIB).transpose()
 
 '''
   Khalil, et al. 1995
 '''
-class SE3ine(SE3):
+class SE3inertia(SE3):
   @staticmethod
   def hat(vec, LIB = 'numpy'):
     mat = np.zeros((6,6),LIB)
