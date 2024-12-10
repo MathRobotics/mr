@@ -21,7 +21,10 @@ class SE3(LieAbstract):
   def set_mat(self, mat = identity(4)):
     self._rot = mat[0:3,0:3]
     self._pos = mat[0:3,3]
-    return mat
+  
+  def set_pos_quaternion(self, pos, quaternion):
+    self._rot = SO3.quaternion_to_rotaion_matrix(quaternion)
+    self._pos = pos
 
   def pos(self):
     return self._pos
