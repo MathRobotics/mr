@@ -18,13 +18,13 @@ class SE3(LieAbstract):
     mat[0:3,3] = self._pos
     return mat
   
-  def set_mat(self, mat = identity(4)):
-    self._rot = mat[0:3,0:3]
-    self._pos = mat[0:3,3]
+  @staticmethod
+  def set_mat(mat = identity(4)):
+    return SE3(mat[0:3,0:3], mat[0:3,3])
   
-  def set_pos_quaternion(self, pos, quaternion):
-    self._rot = SO3.quaternion_to_rotaion_matrix(quaternion)
-    self._pos = pos
+  @staticmethod
+  def set_pos_quaternion(pos, quaternion):
+    return SE3(SO3.quaternion_to_rotation_matrix(quaternion), pos)
 
   def pos(self):
     return self._pos
@@ -37,7 +37,7 @@ class SE3(LieAbstract):
     self._pos = -self._rot @ self._pos
     return self.mat()
   
-  def adjoint(self):
+  def adj_mat(self):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
@@ -46,9 +46,12 @@ class SE3(LieAbstract):
     
     return mat
   
-  def set_adj_mat(self, mat = identity(6)):
-    self._rot = (mat[0:3,0:3] + mat[3:6,3:6]) * 0.5
-    self._pos = SO3.vee(mat[3:6,0:3] @ self._rot.transpose(), self.lib)
+  @staticmethod
+  def set_adj_mat(mat = identity(6)):
+    rot = (mat[0:3,0:3] + mat[3:6,3:6]) * 0.5
+    pos = SO3.vee(mat[3:6,0:3] @ rot.transpose())
+    
+    return SE3(rot, pos)
 
   def adj_inv(self):
     mat = zeros((6,6), self.lib)
@@ -328,7 +331,7 @@ class SE3wrench(SE3):
     
     return mat
   
-  def adjoint(self):
+  def adj_mat(self):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
