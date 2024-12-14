@@ -13,11 +13,12 @@ class SO3(LieAbstract):
   def mat(self):
     return self._rot
   
-  def set_mat(self, mat = identity(4)):
-    self._rot = mat
+  @staticmethod
+  def set_mat(mat = identity(3)):
+    return SO3(mat)
     
   @staticmethod
-  def quaternion_to_rotaion_matrix(quaternion):
+  def quaternion_to_rotation_matrix(quaternion):
     w, x, y, z = quaternion
 
     m = np.array([
@@ -28,8 +29,9 @@ class SO3(LieAbstract):
     
     return m
 
-  def set_quaternion(self, quaternion):
-    self._rot = SO3.quaternion_to_rotaion_matrix(quaternion)
+  @staticmethod
+  def set_quaternion(quaternion):
+    return SO3(SO3.quaternion_to_rotation_matrix(quaternion))
     
   def inverse(self):
     return self._rot.transpose()
@@ -37,8 +39,9 @@ class SO3(LieAbstract):
   def adjoint(self):
     return self._rot
   
-  def set_adj_mat(self, mat = identity(3)):
-    self._rot = mat
+  @staticmethod
+  def set_adj_mat(mat = identity(3)):
+    return SO3(mat)
 
   def adj_inv(self):
     return self._rot.transpose()
