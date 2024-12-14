@@ -36,7 +36,7 @@ class SO3(LieAbstract):
   def inverse(self):
     return self._rot.transpose()
 
-  def adjoint(self):
+  def adj_mat(self):
     return self._rot
   
   @staticmethod

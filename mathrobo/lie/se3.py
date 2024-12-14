@@ -37,7 +37,7 @@ class SE3(LieAbstract):
     self._pos = -self._rot @ self._pos
     return self.mat()
   
-  def adjoint(self):
+  def adj_mat(self):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
@@ -331,7 +331,7 @@ class SE3wrench(SE3):
     
     return mat
   
-  def adjoint(self):
+  def adj_mat(self):
     mat = zeros((6,6), self.lib)
     
     mat[0:3,0:3] = self._rot
