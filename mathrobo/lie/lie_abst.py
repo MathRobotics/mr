@@ -41,7 +41,7 @@ class LieAbstract:
   def inverse(self):
     pass
   
-  def adjoint(self):
+  def adj_mat(self):
     '''
     adjoint expresion of Lie group
     '''
