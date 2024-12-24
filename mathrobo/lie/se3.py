@@ -31,6 +31,9 @@ class SE3(LieAbstract):
   
   def rot(self):
     return self._rot
+  
+  def pos_quaternion(self):
+    return self._pos, SO3.quaternion(SO3.set_mat(self._rot))
     
   def inverse(self):
     self._rot = self._rot.transpose()
