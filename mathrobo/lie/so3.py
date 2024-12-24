@@ -16,6 +16,52 @@ class SO3(LieAbstract):
   @staticmethod
   def set_mat(mat = identity(3)):
     return SO3(mat)
+  
+  def quaternion(self) -> np.ndarray:
+    # trace
+    trace = self._rot[0, 0] + self._rot[1, 1] + self._rot[2, 2]
+
+    # (w, x, y, z)
+    q = np.zeros(4, dtype=float)
+
+    if trace > 0.0:
+        # trace > 0
+        s = 0.5 / np.sqrt(trace + 1.0)
+        q[0] = 0.25 / s  # w
+        q[1] = (self._rot[2, 1] - self._rot[1, 2]) * s  # x
+        q[2] = (self._rot[0, 2] - self._rot[2, 0]) * s  # y
+        q[3] = (self._rot[1, 0] - self._rot[0, 1]) * s  # z
+    else:
+        # trace <= 0
+        # search maximum element in matrix diagonal
+        if (self._rot[0, 0] > self._rot[1, 1]) and (self._rot[0, 0] > self._rot[2, 2]):
+            # self._rot[0, 0] is maximize
+            s = 2.0 * np.sqrt(1.0 + self._rot[0, 0] - self._rot[1, 1] - self._rot[2, 2])
+            q[0] = (self._rot[2, 1] - self._rot[1, 2]) / s  # w
+            q[1] = 0.25 * s                 # x
+            q[2] = (self._rot[0, 1] + self._rot[1, 0]) / s  # y
+            q[3] = (self._rot[0, 2] + self._rot[2, 0]) / s  # z
+        elif self._rot[1, 1] > self._rot[2, 2]:
+            # self._rot[1, 1] is maximize
+            s = 2.0 * np.sqrt(1.0 + self._rot[1, 1] - self._rot[0, 0] - self._rot[2, 2])
+            q[0] = (self._rot[0, 2] - self._rot[2, 0]) / s  # w
+            q[1] = (self._rot[0, 1] + self._rot[1, 0]) / s  # x
+            q[2] = 0.25 * s                 # y
+            q[3] = (self._rot[1, 2] + self._rot[2, 1]) / s  # z
+        else:
+            # self._rot[2, 2] is maximize
+            s = 2.0 * np.sqrt(1.0 + self._rot[2, 2] - self._rot[0, 0] - self._rot[1, 1])
+            q[0] = (self._rot[1, 0] - self._rot[0, 1]) / s  # w
+            q[1] = (self._rot[0, 2] + self._rot[2, 0]) / s  # x
+            q[2] = (self._rot[1, 2] + self._rot[2, 1]) / s  # y
+            q[3] = 0.25 * s                 # z
+
+    # normalize
+    q_norm = np.linalg.norm(q)
+    if q_norm > 1e-15:
+        q /= q_norm
+
+    return q  # [w, x, y, z]
     
   @staticmethod
   def quaternion_to_rotation_matrix(quaternion):
