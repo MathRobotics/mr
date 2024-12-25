@@ -22,7 +22,7 @@ class CMTM(Generic[T]):
     else:
       mat = zeros( (self._dof, self._dof) ) 
       for i in range(p):
-        mat = mat + self.__mat_elem(p-i-1) @ T.hat(self._vec[i])
+        mat = mat + self.__mat_elem(p-(i+1)) @ T.hat(self._vec[i])
         
       return mat / p
     
@@ -34,11 +34,23 @@ class CMTM(Generic[T]):
           mat[self._dof*i:self._dof*j] = self.__mat_elem(abs(i-j))
     return mat
   
-  @staticmethod
-  def set_mat(mat):
-    pass
-  
-  def lie_mat(self):
+  def __adj_mat_elem(self, p):
+    if p == 0:
+      return self._mat
+    else:
+      mat = zeros( (self._dof, self._dof) ) 
+      for i in range(p):
+        mat = mat + self.__adj_mat_elem(p-(i+1)) @ T.hat_adj(self._vec[i])
+        
+      return mat / p
+    
+  def adj_mat(self):
+    mat = identity(self._dof * self._n)
+    for i in range(self._n):
+      for j in range(self._n):
+        if i > j :
+          mat[self._dof*i:self._dof*j] = self.__adj_mat_elem(abs(i-j))
+    return mat
     return self._mat
   
   def lie_vec(self, i):
