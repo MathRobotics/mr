@@ -51,9 +51,11 @@ class CMTM(Generic[T]):
         if i > j :
           mat[self._dof*i:self._dof*j] = self.__adj_mat_elem(abs(i-j))
     return mat
+  
+  def elem_mat(self):
     return self._mat
   
-  def lie_vec(self, i):
+  def elem_vecs(self, i):
     return self._vec[i]
   
   def inverse(self):
