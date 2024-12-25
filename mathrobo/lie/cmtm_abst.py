@@ -6,14 +6,14 @@ from lie_abst import *
 T = TypeVar('T')
 
 class CMTM(Generic[T]):
-  def __init__(self, lie_mat, lie_vec = np.array([]), LIB = 'numpy'): 
+  def __init__(self, elem_mat, elem_vecs = np.array([]), LIB = 'numpy'): 
     '''
     Constructor
     '''
-    self._mat = lie_mat
-    self._vec = lie_vec
-    self._dof = lie_mat.shape[0]
-    self._n = lie_vec.shape[0] + 1
+    self._mat = elem_mat
+    self._vec = elem_vecs
+    self._dof = elem_mat.shape[0]
+    self._n = elem_vecs.shape[0] + 1
     self.lib = LIB
     
   def __mat_elem(self, p):
