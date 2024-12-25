@@ -57,9 +57,42 @@ class CMTM(Generic[T]):
   
   def elem_vecs(self, i):
     return self._vec[i]
+
+  def __mat_inv_elem(self, p):
+    if p == 0:
+      return self._mat.inverse()
+    else:
+      mat = zeros( (self._dof, self._dof) ) 
+      for i in range(p):
+        mat = mat - T.hat(self._vec[i]) @ self.__mat_inv_elem(p-(i+1))
+        
+      return mat / p
   
   def inverse(self):
-    pass
+    mat = identity(self._dof * self._n)
+    for i in range(self._n):
+      for j in range(self._n):
+        if i > j :
+          mat[self._dof*i:self._dof*(i+1),self._dof*j:self._dof*(j+1)] = self.__mat_inv_elem(abs(i-j))
+    return mat
+  
+  def __mat_adj_inv_elem(self, p):
+    if p == 0:
+      return self._mat.adj_inv()
+    else:
+      mat = zeros( (self._dof, self._dof) ) 
+      for i in range(p):
+        mat = mat - T.hat_adj(self._vec[i]) @ self.__mat_adj_inv_elem(p-(i+1))
+        
+      return mat / p
+  
+  def inverse_adj(self):
+    mat = identity(self._dof * self._n)
+    for i in range(self._n):
+      for j in range(self._n):
+        if i > j :
+          mat[self._dof*i:self._dof*(i+1),self._dof*j:self._dof*(j+1)] = self.__mat_adj_inv_elem(abs(i-j))
+    return mat
   
   def __tangent_mat_elem(self, p):
     mat = identity( (self._dof, self._dof) ) 
