@@ -31,7 +31,7 @@ class CMTM(Generic[T]):
     for i in range(self._n):
       for j in range(self._n):
         if i > j :
-          mat[self._dof*i:self._dof*j] = self.__mat_elem(abs(i-j))
+          mat[self._dof*i:self._dof*(i+1),self._dof*j:self._dof*(j+1)] = self.__mat_elem(abs(i-j))
     return mat
   
   def __adj_mat_elem(self, p):
@@ -49,7 +49,7 @@ class CMTM(Generic[T]):
     for i in range(self._n):
       for j in range(self._n):
         if i > j :
-          mat[self._dof*i:self._dof*j] = self.__adj_mat_elem(abs(i-j))
+          mat[self._dof*i:self._dof*(i+1),self._dof*j:self._dof*(j+1)] = self.__adj_mat_elem(abs(i-j))
     return mat
   
   def elem_mat(self):
@@ -64,7 +64,7 @@ class CMTM(Generic[T]):
   def __tangent_mat_elem(self, p):
     mat = identity( (self._dof, self._dof) ) 
     for i in range(p):
-      mat = mat + self.__tangent_mat_elem(p-(i+1)) @ -T.hat(self._vec[i])
+      mat = mat - self.__tangent_mat_elem(p-(i+1)) @ T.hat(self._vec[i])
     return mat
   
   def tangent_mat(self):
@@ -72,12 +72,19 @@ class CMTM(Generic[T]):
     for i in range(self._n):
       for j in range(self._n):
         if i > j :
-          mat[self._dof*i:self._dof*j] = self.__tangent_mat_elem(abs(i-j))
-          
+          mat[self._dof*i:self._dof*(i+1),self._dof*j:self._dof*(j+1)] = self.__tangent_mat_elem(abs(i-j))
+      
+  def tangent_mat_inv(self):
+    mat = identity(self._dof * self._n)
+    for i in range(self._n):
+      for j in range(self._n):
+        if i > j :
+          mat[self._dof*i:self._dof*(i+1),self._dof*j:self._dof*(j+1)] = T.hat(self._vec[abs(i-j)])
+  
   def __tangent_adj_mat_elem(self, p):
     mat = identity( (self._dof, self._dof) ) 
     for i in range(p):
-      mat = mat + self.__tangent_adj_mat_elem(p-(i+1)) @ -T.hat_adj(self._vec[i])
+      mat = mat - self.__tangent_adj_mat_elem(p-(i+1)) @ T.hat_adj(self._vec[i])
     return mat
   
   def tangent_adj_mat(self):
@@ -85,18 +92,11 @@ class CMTM(Generic[T]):
     for i in range(self._n):
       for j in range(self._n):
         if i > j :
-          mat[self._dof*i:self._dof*j] = self.__tangent_adj_mat_elem(abs(i-j))
-      
-  def tangent_mat_inv(self):
-    mat = identity(self._dof * self._n)
-    for i in range(self._n):
-      for j in range(self._n):
-        if i > j :
-          mat[self._dof*i:self._dof*j] = T.hat(self._vec[abs(i-j)])
+          mat[self._dof*i:self._dof*(i+1),self._dof*j:self._dof*(j+1)] = self.__tangent_adj_mat_elem(abs(i-j))
   
   def tangent_adj_mat_inv(self):
     mat = identity(self._dof * self._n)
     for i in range(self._n):
       for j in range(self._n):
         if i > j :
-          mat[self._dof*i:self._dof*j] = T.hat_adj(self._vec[abs(i-j)])
+          mat[self._dof*i:self._dof*(i+1),self._dof*j:self._dof*(j+1)] = T.hat_adj(self._vec[abs(i-j)])
