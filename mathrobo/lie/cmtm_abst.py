@@ -1,7 +1,6 @@
 from typing import TypeVar, Generic
 
 from ..basic import *
-from lie_abst import *
 
 T = TypeVar('T')
 
@@ -12,7 +11,7 @@ class CMTM(Generic[T]):
     '''
     self._mat = elem_mat
     self._vec = elem_vecs
-    self._dof = elem_mat.shape[0]
+    self._dof = elem_mat.mat().shape[0]
     self._n = elem_vecs.shape[0] + 1
     self.lib = LIB
     
