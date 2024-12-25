@@ -18,7 +18,7 @@ class CMTM(Generic[T]):
     
   def __mat_elem(self, p):
     if p == 0:
-      return self._mat
+      return self._mat.mat()
     else:
       mat = zeros( (self._dof, self._dof) ) 
       for i in range(p):
@@ -36,7 +36,7 @@ class CMTM(Generic[T]):
   
   def __adj_mat_elem(self, p):
     if p == 0:
-      return self._mat
+      return self._mat.adj_mat()
     else:
       mat = zeros( (self._dof, self._dof) ) 
       for i in range(p):
@@ -53,7 +53,7 @@ class CMTM(Generic[T]):
     return mat
   
   def elem_mat(self):
-    return self._mat
+    return self._mat.mat()
   
   def elem_vecs(self, i):
     return self._vec[i]
