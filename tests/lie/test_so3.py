@@ -109,6 +109,16 @@ def test_so3_exp_integ2nd():
   
   np.testing.assert_allclose(res, mat)
   
+def test_so3_matmul():
+  v = np.random.rand(3) 
+  r = mr.SO3.exp(v)
+  
+  rot1 = mr.SO3(r)
+  rot2 = mr.SO3(r.transpose())
+  res = rot1@rot2
+  
+  np.testing.assert_allclose(res.mat(), np.eye(3), rtol=1e-15, atol=1e-15)
+  
 def test_so3_jac_lie_wrt_scaler():
   v = np.random.rand(3)
   dv = np.random.rand(3)

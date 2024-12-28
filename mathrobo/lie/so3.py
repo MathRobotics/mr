@@ -1,7 +1,6 @@
 from ..basic import *
 from .lie_abst import *
 
-
 class SO3(LieAbstract):
   def __init__(self, r = identity(3), LIB = 'numpy'):
     '''
@@ -269,6 +268,11 @@ class SO3(LieAbstract):
   @staticmethod
   def exp_integ_adj(vec, a, LIB = 'numpy'):
     return SO3.exp_integ(vec, a, LIB)
+
+  def __matmul__(self, other: "SO3") -> "SO3":
+    if not isinstance(other, SO3):
+        raise TypeError("Right operand should be SO3")
+    return SO3(self._rot @ other._rot)
 
   
 class SO3wrench(SO3):
