@@ -2,12 +2,16 @@ from ..basic import *
 from .lie_abst import *
 
 class SO3(LieAbstract):
+  _dof = 3
   def __init__(self, r = identity(3), LIB = 'numpy'):
     '''
     Constructor
     '''
     self._rot = r
     self._lib = LIB
+
+  def dof(self):
+    return self._dof
     
   def mat(self):
     return self._rot
