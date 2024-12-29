@@ -324,6 +324,22 @@ class SE3(LieAbstract):
 
     return mat
   
+  def __matmul__(self, rval):
+    if isinstance(rval, SE3):
+      return SE3(self._rot @ rval._rot, self._pos + self._rot @ rval._pos)
+    elif isinstance(rval, np.ndarray):
+      if rval.shape[0] == 3:
+        return self._rot @ rval + self._pos
+      elif rval.shape == (6,):
+        v = zeros(6)
+        v[0:3] = self._rot @ rval[0:3]
+        v[3:6] = SO3.hat(self._pos, self.lib) @ self._rot @ rval[0:3] + self._rot @ rval[3:6]
+        return v
+      elif rval.shape == (6,6):
+        return self.adj_mat() @ rval
+    else:
+      TypeError("Right operand should be SE3 or numpy.ndarray")
+  
 class SE3wrench(SE3):
   def mat(self):
     mat = zeros((6,6), self.lib)
