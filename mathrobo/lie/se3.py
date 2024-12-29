@@ -324,6 +324,22 @@ class SE3(LieAbstract):
 
     return mat
   
+  def __matmul__(self, rval):
+    if isinstance(rval, SE3):
+      return SE3(self._rot @ rval._rot, self._pos + self._rot @ rval._pos)
+    elif isinstance(rval, np.ndarray):
+      if rval.shape[0] == 3:
+        return self._rot @ rval + self._pos
+      elif rval.shape == (6,):
+        v = zeros(6)
+        v[0:3] = self._rot @ rval[0:3]
+        v[3:6] = SO3.hat(self._pos, self.lib) @ self._rot @ rval[0:3] + self._rot @ rval[3:6]
+        return v
+      elif rval.shape == (6,6):
+        return self.adj_mat() @ rval
+    else:
+      TypeError("Right operand should be SE3 or numpy.ndarray")
+  
 class SE3wrench(SE3):
   def mat(self):
     mat = zeros((6,6), self.lib)
@@ -379,8 +395,8 @@ class SE3inertia(SE3):
 
     mpg = vec[1:4]
 
-    mat[0:3,0:3] = SO3ine.hat(vec[4:10])
-    mat[0:3,3:6] = SO3wre.hat(mpg)
+    mat[0:3,0:3] = SE3inertia.hat(vec[4:10])
+    mat[0:3,3:6] = SE3wrench.hat(mpg)
     mat[3:6,0:3] = SO3.hat(mpg)
     mat[3:6,3:6] = vec[0]*identity(3,LIB)
 
@@ -395,8 +411,8 @@ class SE3inertia(SE3):
     w = vec[0:3]
 
     mat[3:6,0] = v
-    mat[0:3,1:4] = SO3wre.hat_commute(v)
+    mat[0:3,1:4] = SE3wrench.hat_commute(v)
     mat[3:6,1:4] = SO3.hat_commute(w)
-    mat[0:3,4:10] = SO3ine.hat_commute(w)
+    mat[0:3,4:10] = SE3inertia.hat_commute(w)
 
     return mat

@@ -1,7 +1,6 @@
 from ..basic import *
 from .lie_abst import *
 
-
 class SO3(LieAbstract):
   def __init__(self, r = identity(3), LIB = 'numpy'):
     '''
@@ -270,6 +269,13 @@ class SO3(LieAbstract):
   def exp_integ_adj(vec, a, LIB = 'numpy'):
     return SO3.exp_integ(vec, a, LIB)
 
+  def __matmul__(self, rval):
+    if isinstance(rval, SO3):
+      return SO3(self._rot @ rval._rot)
+    elif isinstance(rval, np.ndarray):
+      return self._rot @ rval
+    else:
+      TypeError("Right operand should be SO3 or numpy.ndarray")
   
 class SO3wrench(SO3):
   @staticmethod
