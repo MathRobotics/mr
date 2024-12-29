@@ -148,3 +148,22 @@ class CMTM(Generic[T]):
         if i > j :
           mat[self._adj_mat_size*i:self._adj_mat_size*(i+1),self._adj_mat_size*j:self._adj_mat_size*(j+1)] = self._mat.hat_adj(self._vecs[abs(i-j-1)])
     return mat
+  
+  def __matmul__(self, rval):
+    if isinstance(rval, CMTM[T]):
+      if self._n == rval._n:
+        m = self._mat @ rval._mat
+        v = np.zeros((self._n-1,self._mat.dof()))
+        if self._n == 2:
+          v[0] = rval._mat @ self._vecs[0] + rval._vecs[0]
+        elif self._n == 3:
+          v[0] = rval._mat @ self._vecs[0] + rval._vecs[0]
+          v[1] = rval._mat @ self._vecs[1] + self._mat.hat_adj(rval._mat @ self._vecs[0])  + rval._vecs[1]
+        else:
+          TypeError("Not supported n > 3")
+        return CMTM[T](m, v)
+      TypeError("Right operand should be same size in left operand")
+    elif isinstance(rval, np.ndarray):
+      return self.mat() @ rval
+    else:
+      TypeError("Right operand should be CMTM or numpy.ndarray")

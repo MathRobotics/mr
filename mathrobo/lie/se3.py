@@ -3,7 +3,7 @@ from .lie_abst import *
 from .so3 import *
 
 class SE3(LieAbstract):
-
+  _dof = 6
   def __init__(self, rot = identity(3), pos = zeros(3), LIB = 'numpy'): 
     '''
     Constructor
@@ -11,6 +11,9 @@ class SE3(LieAbstract):
     self._rot = rot
     self._pos = pos
     self.lib = LIB
+
+  def dof(self):
+    return self._dof
   
   def mat(self):
     mat = identity(4)
