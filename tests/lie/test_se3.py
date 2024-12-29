@@ -154,6 +154,60 @@ def test_se3_exp_integ_adj():
   m, _ = integrate.quad_vec(integrad, 0, angle)
     
   np.testing.assert_allclose(res, m)
+
+def test_se3_matmul():
+  v = np.random.rand(6)
+  v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
+  m = mr.SO3.exp(v[0:3]) 
+  
+  h1 = mr.SE3(m, v[3:6])
+  h2 = mr.SE3(m.transpose(), -m.transpose() @ v[3:6])
+  res = h1@h2
+  
+  np.testing.assert_allclose(res.mat(), np.eye(4), rtol=1e-15, atol=1e-15)
+
+def test_se3_matmul_mat6d():
+  v = np.random.rand(6)
+  v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
+  m = mr.SO3.exp(v[0:3]) 
+  
+  mat = mr.SE3(m, v[3:6])
+  
+  m = mr.SE3(m.transpose(), -m.transpose() @ v[3:6]).adj_mat()
+
+  res = mat@m
+  
+  np.testing.assert_allclose(res, np.eye(6), rtol=1e-15, atol=1e-15)
+
+def test_se3_matmul_vec6d():
+  v = np.random.rand(6)
+  v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
+  m = mr.SO3.exp(v[0:3]) 
+  
+  h = mr.SE3(m, v[3:6])
+  vec = np.random.rand(6)
+
+  res = h @ vec
+
+  ref = np.zeros(6)
+  ref[0:3] = m @ vec[0:3]
+  ref[3:6] = mr.SO3.hat(v[3:6]) @ m @ vec[0:3] + m @ vec[3:6]
+
+  np.testing.assert_allclose(res, ref, rtol=1e-15, atol=1e-15)
+
+def test_se3_matmul_vec3d():
+  v = np.random.rand(6)
+  v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
+  r = mr.SO3.exp(v[0:3]) 
+  
+  h = mr.SE3(r, v[3:6])
+  vec = np.random.rand(3)
+
+  res = h @ vec
+
+  ref = h.rot() @ vec + h.pos()
+
+  np.testing.assert_allclose(res, ref, rtol=1e-15, atol=1e-15)
   
 def test_se3_jac_lie_wrt_scaler():
   v = np.random.rand(6)
