@@ -152,9 +152,6 @@ def test_se3_exp_integ_adj():
     return expm(s*mr.SE3.hat_adj(vec))
   
   m, _ = integrate.quad_vec(integrad, 0, angle)
-  
-  print(res)
-  print(m)
     
   np.testing.assert_allclose(res, m)
   
