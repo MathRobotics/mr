@@ -395,8 +395,8 @@ class SE3inertia(SE3):
 
     mpg = vec[1:4]
 
-    mat[0:3,0:3] = SO3ine.hat(vec[4:10])
-    mat[0:3,3:6] = SO3wre.hat(mpg)
+    mat[0:3,0:3] = SE3inertia.hat(vec[4:10])
+    mat[0:3,3:6] = SE3wrench.hat(mpg)
     mat[3:6,0:3] = SO3.hat(mpg)
     mat[3:6,3:6] = vec[0]*identity(3,LIB)
 
@@ -411,8 +411,8 @@ class SE3inertia(SE3):
     w = vec[0:3]
 
     mat[3:6,0] = v
-    mat[0:3,1:4] = SO3wre.hat_commute(v)
+    mat[0:3,1:4] = SE3wrench.hat_commute(v)
     mat[3:6,1:4] = SO3.hat_commute(w)
-    mat[0:3,4:10] = SO3ine.hat_commute(w)
+    mat[0:3,4:10] = SE3inertia.hat_commute(w)
 
     return mat
