@@ -226,3 +226,55 @@ def test_cmtm_se3_tangent_adj_inv():
     mat = np.eye(6*(i+1))
 
     np.testing.assert_allclose(res.tangent_adj_mat() @ res.tangent_adj_mat_inv(), mat, rtol=1e-15, atol=1e-15)
+    
+def test_cmtm_se3_matmul():
+  v1, v2 = np.random.rand(2,6) 
+  r1 = mr.SE3.exp(v1)
+  r2 = mr.SE3.exp(v2)
+  
+  mat1 = mr.CMTM[mr.SE3](mr.SE3.set_mat(r1))
+  mat2 = mr.CMTM[mr.SE3](mr.SE3.set_mat(r2))
+  res = mat1@mat2
+  
+  sol = mr.SE3.set_mat(r1) @ mr.SE3.set_mat(r2)
+  
+  np.testing.assert_array_equal(res.mat(), sol.mat())
+  
+# def test_cmtm_se3_vec1d_matmul():
+#   v1, v2 = np.random.rand(2,6) 
+#   r1 = mr.SE3.exp(v1)
+#   r2 = mr.SE3.exp(v2)
+  
+#   vel1, vel2 = np.random.rand(1,6), np.random.rand(1,6)
+  
+#   mat1 = mr.CMTM[mr.SE3](mr.SE3(r1), vel1)
+#   mat2 = mr.CMTM[mr.SE3](mr.SE3(r2), vel2)
+#   res = mat1 @ mat2
+  
+#   sol_mat = mr.SE3(r1) @ mr.SE3(r2)
+#   sol_vec = np.zeros((1,6))
+#   sol_vec[0] = mr.SE3(r2) @ vel1[0] + vel2[0]
+  
+#   sol = mr.CMTM[mr.SE3](sol_mat, sol_vec)
+    
+#   np.testing.assert_array_equal(res.mat(), sol.mat())
+  
+# def test_cmtm_se3_vec2d_matmul():
+#   v1, v2 = np.random.rand(2,6) 
+#   r1 = mr.SE3.exp(v1)
+#   r2 = mr.SE3.exp(v2)
+  
+#   vel1, vel2 = np.random.rand(2,6), np.random.rand(2,6)
+  
+#   mat1 = mr.CMTM[mr.SE3](mr.SE3(r1), vel1)
+#   mat2 = mr.CMTM[mr.SE3](mr.SE3(r2), vel2)
+#   res = mat1 @ mat2
+  
+#   sol_mat = mr.SE3(r1) @ mr.SE3(r2)
+#   sol_vec = np.zeros((2,6))
+#   sol_vec[0] = mr.SE3(r2) @ vel1[0] + vel2[0]
+#   sol_vec[1] = mr.SE3(r2) @ vel1[1] + mr.SE3.hat_adj(mr.SE3(r2) @ vel2[0]) @ vel1[0] + vel2[1]
+  
+#   sol = mr.CMTM[mr.SE3](sol_mat, sol_vec)
+    
+#   np.testing.assert_array_equal(res.mat(), sol.mat())
