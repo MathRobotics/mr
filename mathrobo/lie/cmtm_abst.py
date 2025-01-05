@@ -150,7 +150,7 @@ class CMTM(Generic[T]):
     return mat
   
   def __matmul__(self, rval):
-    if isinstance(rval, CMTM[T]):
+    if isinstance(rval, CMTM):
       if self._n == rval._n:
         m = self._mat @ rval._mat
         v = np.zeros((self._n-1,self._mat.dof()))
@@ -158,7 +158,7 @@ class CMTM(Generic[T]):
           v[0] = rval._mat @ self._vecs[0] + rval._vecs[0]
         elif self._n == 3:
           v[0] = rval._mat @ self._vecs[0] + rval._vecs[0]
-          v[1] = rval._mat @ self._vecs[1] + self._mat.hat_adj(rval._mat @ self._vecs[0])  + rval._vecs[1]
+          v[1] = rval._mat @ self._vecs[1] + self._mat.hat_adj(rval._mat @ rval._vecs[0]) @ self._vecs[0]  + rval._vecs[1]
         else:
           TypeError("Not supported n > 3")
         return CMTM[T](m, v)
