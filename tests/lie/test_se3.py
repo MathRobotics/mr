@@ -90,7 +90,7 @@ def test_se3_vee():
   
 def test_se3_exp():
   v = np.random.rand(6)
-  a = np.random.rand(1)
+  a = np.random.rand()
   res = mr.SE3.exp(v, a)
 
   m = expm(a*mr.SE3.hat(v))
@@ -99,7 +99,7 @@ def test_se3_exp():
   
 def test_se3_exp_integ():
   v = np.random.rand(6)
-  a = np.random.rand(1)
+  a = np.random.rand()
   res = mr.SE3.exp_integ(v, a)
 
   def integrad(s):
@@ -135,7 +135,7 @@ def test_se3_hat_adj_commute():
   
 def test_se3_exp_adj():
   v = np.random.rand(6)
-  a = np.random.rand(1)
+  a = np.random.rand()
   res = mr.SE3.exp_adj(v, a)
 
   m = expm(a*mr.SE3.hat_adj(v))

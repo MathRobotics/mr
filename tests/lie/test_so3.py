@@ -74,7 +74,7 @@ def test_so3_vee():
 
 def test_so3_exp():
   v = np.random.rand(3)
-  a = np.random.rand(1)
+  a = np.random.rand()
   res = mr.SO3.exp(v, a)
 
   m = expm(a*mr.SO3.hat(v))
@@ -83,7 +83,7 @@ def test_so3_exp():
   
 def test_so3_exp_integ():
   v = np.random.rand(3)
-  a = np.random.rand(1)
+  a = np.random.rand()
   res = mr.SO3.exp_integ(v, a)
 
   def integrad(s):
@@ -95,7 +95,7 @@ def test_so3_exp_integ():
   
 def test_so3_exp_integ2nd():
   v = np.random.rand(3)
-  a = np.random.rand(1)
+  a = np.random.rand()
   res = mr.SO3.exp_integ2nd(v, a)
 
   def integrad(s_):
