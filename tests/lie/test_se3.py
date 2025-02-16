@@ -165,6 +165,19 @@ def test_se3_matmul():
   res = h1@h2
   
   np.testing.assert_allclose(res.mat(), np.eye(4), rtol=1e-15, atol=1e-15)
+  
+def test_se3_matmul_mat4d():
+  v = np.random.rand(6)
+  v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
+  m = mr.SO3.exp(v[0:3]) 
+  
+  mat = mr.SE3(m, v[3:6])
+  
+  m = mr.SE3(m.transpose(), -m.transpose() @ v[3:6]).mat()
+
+  res = mat@m
+  
+  np.testing.assert_allclose(res, np.eye(4), rtol=1e-15, atol=1e-15)
 
 def test_se3_matmul_mat6d():
   v = np.random.rand(6)
