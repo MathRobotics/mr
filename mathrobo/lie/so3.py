@@ -135,9 +135,7 @@ class SO3(LieAbstract):
       if iszero(theta):
         return identity(3)
       else:
-        x = vec[0]/theta
-        y = vec[1]/theta
-        z = vec[2]/theta           
+        x, y, z = vec / theta           
 
     elif LIB == 'sympy':
       a_ = a
