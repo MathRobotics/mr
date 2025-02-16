@@ -127,7 +127,7 @@ class SO3(LieAbstract):
     """
     if LIB == 'numpy':
       theta = norm(vec, LIB)
-      if theta != 1.0:
+      if not np.isclose(theta, 1.0):
         a_ = a*theta
       else:
         a_ = a
@@ -172,7 +172,7 @@ class SO3(LieAbstract):
     """
     if LIB == 'numpy':
       theta = norm(vec, LIB)
-      if theta != 1.0:
+      if not np.isclose(theta, 1.0):
         a_ = a*theta
       else:
         a_ = a
@@ -218,7 +218,7 @@ class SO3(LieAbstract):
     """
     if LIB == 'numpy':
       theta = norm(vec, LIB)
-      if theta != 1.0:
+      if not np.isclose(theta, 1.0):
         a_ = a*theta
       else:
         a_ = a

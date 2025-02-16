@@ -140,7 +140,7 @@ class SE3(LieAbstract):
     """
     if LIB == 'numpy':
       theta = norm(vec[0:3], LIB)
-      if theta != 1.0:
+      if not np.isclose(theta, 1.0):
         a_ = a*theta
       else:
         a_ = a
@@ -338,6 +338,8 @@ class SE3(LieAbstract):
         v[0:3] = self._rot @ rval[0:3]
         v[3:6] = SO3.hat(self._pos, self.lib) @ self._rot @ rval[0:3] + self._rot @ rval[3:6]
         return v
+      elif rval.shape == (4,4):
+        return self.mat() @ rval
       elif rval.shape == (6,6):
         return self.adj_mat() @ rval
     else:
